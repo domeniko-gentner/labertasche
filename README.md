@@ -26,7 +26,7 @@ A comment system for Hugo, written in Python (and Javascript).
 
 A picture often says more than a thousand words:
 
-![flow chart image](/docs/flow-chart.png "Flow Chart")
+![flow chart image](docs/flow-chart.png "Flow Chart")
 
 In some words, the user sends the comment from your site to the comment system, the comment system does the validation
 and confirmation. Then, a json is put into the data directory from where you can load it via Hugo and generate your 
