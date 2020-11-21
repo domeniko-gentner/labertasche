@@ -1,0 +1,87 @@
+@charset "utf-8";
+
+$family-sans-serif: "Open Sans", sans-serif;
+$family-code: "Fira Code", monospace;
+
+$body-color: white;
+$strong-color: white;
+
+$link: #feda5a;
+$link-hover: white;
+
+$input-icon-color: #1d1e22;
+$input-icon-active-color: black;
+
+$section-padding-large: 10rem 1.5rem;
+
+$navbar-background-color: #feda6a;
+$navbar-item-color: black;
+$navbar-item-hover-color: white;
+$navbar-item-hover-background-color: #feda6a;
+$navbar-burger-color: black;
+
+$footer-background-color: #393f4d;
+$footer-color: true;
+
+$card-header-color: white;
+
+$table-head-background-color: #feda6a;
+$table-body-background-color: white;
+
+$box-background-color: #feda6a;
+$box-padding: 0.25rem;
+
+$media-border-color: #feda6a;
+
+$menu-item-color: white;
+$menu-item-hover-color: black;
+$menu-item-hover-background-color: #feda6a;
+$menu-label-font-size: 1em;
+
+@import "bulma/utilities/_all";
+@import "bulma/base/_all";
+@import "bulma/elements/_all";
+@import "bulma/form/_all";
+@import "bulma/components/_all";
+@import "bulma/grid/_all";
+@import "bulma/helpers/_all";
+@import "bulma/layout/_all";
+
+/* open-sans-regular - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'),
+  url('/static/css/open-sans-v18-latin-regular.woff2') format('woff2'); /* Chrome 26+, Opera 23+, Firefox 39+ */
+}
+
+canvas{
+  width: 100%;
+  height: auto;
+}
+
+.bg-yayellow{
+  background-color: #feda6a;
+}
+
+.bg-deepmatte{
+  background-color: #393f4d;
+}
+
+.bg-darkslate{
+  background-color: #1d1e22;
+}
+
+.brdr-yayellow{
+  border: 2px solid #feda6a;
+}
+
+.bg-compliment{
+  background-color: #384667;
+}
+
+.fg-yellow{
+  color: #feda6a;
+}

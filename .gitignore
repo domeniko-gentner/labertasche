@@ -1,0 +1,8 @@
+.idea
+__pycache__/
+venv
+db/labertasche.db-shm
+db/labertasche.db-wal
+output
+/output/
+*.sql

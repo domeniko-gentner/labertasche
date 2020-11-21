@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block main %}
+<div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
+    <h1 class="title has-text-white has-text-centered">Review Spam</h1>
+    <div class="field">
+        <form method="post" action="/dashboard/review-spam/">
+            <div class="control">
+                <div class="select">
+                    <select name="selected_location" onchange="this.form.submit();">
+                        <option value="-1">Select the article</option>
+                        {% for each in locations %}
+                            {% if selected is defined %}
+                                {% if selected | string() == each.id_location | string() %}
+                                    <option selected="selected" value="{{ each.id_location }}">{{ each.location }}</option>
+                                {% else %}
+                                    <option value="{{ each.id_location }}">{{ each.location }}</option>
+                                {% endif %}
+                            {% else %}
+                                <option value="{{ each.id_location }}">{{ each.location }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        {% if spam_comments is defined %}
+            {% for comment in spam_comments %}
+                <article>
+                    <div class="media mb-5 brdr-yayellow my-shadow-subtle bg-compliment">
+                        <figure class="media-left ml-0 mb-0">
+                            <p class="image is-128x128">
+                                <img alt="gravatar portrait" src="https://gravatar.com/avatar/{{comment.gravatar}}?size=128">
+                            </p>
+                        </figure>
+                        <div class="media-content">
+                            <div class="content mr-5 mt-2">
+                                <a title="comment ID" id="comment_{{comment.comments_id}}" href="#comment_{{comment.comments_id}}">#{{comment.comments_id}}</a>
+                                Posted by <span class="fg-yellow">{{comment.email}}</span>
+                                on <small class="fg-yellow">{{comment.created_on}}</small>
+                                spam score: <span title="The higher this is, the less likely it is spam" class="fg-yellow">{{  comment.spam_score }}</span>
+                                <br><br>
+                                <span class="mt-5">
+                                    {{comment.content}}
+                                </span>
+                            </div>
+                            <nav class="level is-mobile">
+                                <a title="Delete this comment"
+                                   class="level-item"
+                                   href="/dashboard/delete-comment/{{ selected }}/{{ comment.comments_id }}">
+                                    <span class="icon is-medium"><i class="mdi mdi-24px mdi-trash-can"></i></span>
+                                </a>
+                                <a title="Delete comment and block mail address"
+                                   class="level-item"
+                                   href="/dashboard/block-mail/{{ selected }}/{{ comment.comments_id }}">
+                                    <span class="icon is-medium"><i class="mdi mdi-24px  mdi-shield-lock"></i></span>
+                                </a>
+                                <a title="Publish this comment, don't allow mail"
+                                   class="level-item"
+                                   href="/dashboard/allow-comment/{{ selected }}/{{ comment.comments_id }}">
+                                    <span class="icon is-medium"><i class="mdi mdi-24px mdi-check"></i></span>
+                                </a>
+                                <a title="Allow email to bypass spam detection and allow comment"
+                                   class="level-item"
+                                   href="/dashboard/allow-user/{{ selected }}/{{ comment.comments_id }}">
+                                    <span class="icon is-medium"><i class="mdi mdi-24px mdi-check-all"></i></span>
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="labertasche comment system dashboard">
+    <link rel="preconnect" href="https://cdn.materialdesignicons.com">
+
+    <!-- Preload -->
+    <link rel="preload" href="/static/css/open-sans-v18-latin-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" media="all">
+    <link rel="preload" as="style" href="/static/css/labertasche.css">
+    <link rel="preload" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" as="style">
+
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/css/labertasche.css" media="screen">
+    <link rel="stylesheet" href="/static/css/Chart.min.css" media="screen">
+
+    <title>labertasche Dashboard</title>
+</head>
+<body class="is-family-sans-serif">
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+            <a class="navbar-item is-size-4" href="/">
+                <span class="icon"><span class="mdi mdi-24px mdi-chart-bar"></span></span>
+                &nbsp;Labertasche Dashboard
+            </a>
+            <div class="navbar-start"></div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="/dashboard/review-spam/">
+                    <span class="icon"><i class="mdi mdi-24px mdi-space-invaders"></i></span>
+                    &nbsp;REVIEW SPAM
+                </a>
+                <a class="navbar-item" href="/dashboard/manage-comments/">
+                    <span class="icon"><i class="mdi mdi-24px mdi-comment"></i></span>
+                    &nbsp;MANAGE COMMENTS
+                </a>
+                <a class="navbar-item" href="/dashboard/manage-mail">
+                    <span class="icon"><i class="mdi mdi-24px mdi-email"></i></span>
+                    &nbsp;MANAGE EMAIL ADDRESSES
+                </a>
+                <a class="navbar-item" href="/logout/">
+                    <span class="icon"><i class="mdi mdi-24px mdi-account-cancel"></i></span>
+                    &nbsp;LOGOUT
+                </a>
+            </div>
+        </nav>
+        <section style="min-height: 100vh;" class="bg-darkslate p-4">
+        {% block main %}
+        {% endblock %}
+        </section>
+<script defer src="/static/js/dashboard.js"></script>
+<script defer src="/static/js/Chart.bundle.min.js"></script>
+</body>
+</html>

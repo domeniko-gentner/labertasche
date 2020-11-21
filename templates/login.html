@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="labertasche comment system dashboard">
+    <link rel="preconnect" href="https://cdn.materialdesignicons.com/">
+
+    <!-- Preload -->
+    <link rel="preload" href="/static/css/open-sans-v18-latin-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" media="all">
+    <link rel="preload" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" as="style">
+    <link rel="preload" as="style" href="/static/css/labertasche.css">
+
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/css/labertasche.css" media="screen">
+
+    <title>labertasche Dashboard</title>
+</head>
+<body>
+<section class="hero bg-yayellow is-fullheight">
+    <div class="hero-head">
+        <a target="_blank" rel="noopener nofollow noreferrer"
+           class="button is-info is-inverted is-medium">
+                <span class="icon mr-2">
+                  <i class="mdi mdi-36px mdi-github"></i>
+                </span>
+            <span>Download</span>
+        </a>
+    </div>
+    <div class="hero-body has-text-black">
+        <div class="container has-text-centered">
+            <p class="title">Labertasche Login</p>
+            <form method="POST" action="/login">
+                <div class="field">
+                    <div class="control is-expanded has-icons-left">
+                        <input class="input" name="username" type="text">
+                        <span class="icon is-small is-left">
+                            <span class="mdi mdi-24px mdi-shield-account"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control is-expanded has-icons-left">
+                        <input class="input" name="password" type="password">
+                        <span class="icon is-small is-left">
+                            <span class="mdi mdi-24px mdi-shield-key"></span>
+                        </span>
+                    </div>
+                </div>
+                <input hidden type="submit">
+            </form>
+        </div>
+    </div>
+    <div class="hero-foot"></div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block main %}
+<div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
+    <h1 class="title has-text-white has-text-centered">Overview</h1>
+    <div class="columns">
+        <div class="column is-full">
+            <p class="is-size-4 mb-4 mt-4">Last 7 days</p>
+            <canvas id="chart-7d"></canvas>
+        </div>
+    </div>
+
+</div>
+    <!--suppress JSValidateTypes -->
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        new Chart( document.getElementById('chart-7d'), {
+                type: "line",
+                data: {
+                    labels:[{% for days in dates %}"{{ days }}"{% if not loop.last %},{% endif %}{% endfor %}],
+                    datasets: [
+                        {
+                            label: "spam",
+                            borderColor: "rgba(182, 106, 254, 1)",
+                            backgroundColor: "rgba(182, 106, 254, 0.1)",
+                            data: {{ spam }}
+                        },
+                        {
+                            label: "published comments",
+                            borderColor: "rgba(254, 218, 106, 1)",
+                            backgroundColor: "rgba(254, 218, 106, 0.1)",
+                            data: {{published}}
+                        },
+                        {
+                            label: "unpublished comments",
+                            borderColor: "rgba(108, 106, 254, 1)",
+                            backgroundColor: "rgba(108, 106, 254, 0.1)",
+                            data: {{ unpublished }}
+                        }
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }]
+                    },
+                    legend: {
+                        labels: {
+                            fontColor: 'white'
+                        }
+                    }
+                }
+            }
+        );
+    });
+</script>
+{% endblock %}
+
+

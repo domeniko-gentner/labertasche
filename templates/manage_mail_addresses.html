@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block main %}
+<div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
+<h1 class="title has-text-white has-text-centered">Manage mail addresses</h1>
+<div class="field">
+    <div class="control has-icons-left">
+        <input class="input"
+               type="text"
+               id="mail-search"
+               oninput="dashboard_mailsearch(this);"
+               placeholder="Search mail..."
+               aria-placeholder="type to search mail addresses">
+        <span class="icon is-small is-left">
+            <span class="mdi mdi-24px mdi-account-search"></span>
+        </span>
+    </div>
+</div>
+<div class="table-container">
+    <table class="table is-fullwidth">
+        <thead>
+            <tr>
+                <th class="has-text-centered">Address</th>
+                <th class="has-text-centered">Status</th>
+                <th class="has-text-centered"></th>
+            </tr>
+        </thead>
+        <tbody id="mail-table">
+        {% for each in addresses %}
+            <tr>
+                <td>{{each.email}}</td>
+                <td>
+                    <p class="has-text-centered">
+                        {% if each.is_blocked %}
+                            <a title="Email is currently blocked. Click to unblock."
+                               class="has-text-black"
+                               href="/dashboard/toggle-mail-allowed/{{ each.id_email }}">
+                                <i class="mdi mdi-24px mdi-check"></i>
+                            </a>
+                        {% else %}
+                            <a title="Email is currently excempt from spam detection. Click to block."
+                               class="has-text-danger"
+                               href="/dashboard/toggle-mail-allowed/{{ each.id_email }}">
+                                <i class="mdi mdi-24px mdi-block-helper"></i>
+                            </a>
+                        {% endif %}
+                    </p>
+                </td>
+                <td>
+                    <p class="has-text-centered">
+                        <a title="Delete entry, this resets the reputation"
+                           class="has-text-danger-dark"
+                           href="/dashboard/reset-mail-reputation/{{ each.id_email }}">
+                            <i class="mdi mdi-24px mdi-trash-can"></i>
+                        </a>
+                    </p>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}
