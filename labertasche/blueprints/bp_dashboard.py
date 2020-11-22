@@ -10,7 +10,7 @@ from flask import Blueprint, render_template, request, redirect
 from flask_login import login_required
 from labertasche.database import labertasche_db as db
 from labertasche.models import TLocation, TComments, TEmail
-from labertasche.helper import dates_of_the_week
+from labertasche.helper import dates_of_the_week, export_location
 from sqlalchemy import func
 import re
 
@@ -131,6 +131,7 @@ def dashboard_review_spam_delete_comment(location_id, comment_id):
 
     # Remove after last slash, to keep the location but get rid of the comment id
     url = re.match("^(.*[/])", request.referrer)[0]
+    export_location(location_id)
     return redirect(f"{url}/{location_id}")
 
 
@@ -144,6 +145,7 @@ def dashboard_review_spam_allow_comment(comment_id, location_id):
         db.session.commit()
 
     url = re.match("^(.*[/])", request.referrer)[0]
+    export_location(location_id)
     return redirect(f"{url}/{location_id}")
 
 
@@ -169,6 +171,7 @@ def dashboard_review_spam_block_mail(location_id, comment_id):
     db.session.commit()
 
     url = re.match("^(.*[/])", request.referrer)[0]
+    export_location(location_id)
     return redirect(f"{url}/{location_id}")
 
 
@@ -198,4 +201,5 @@ def dashboard_review_spam_allow_user(location_id, comment_id):
 
     db.session.commit()
     url = re.match("^(.*[/])", request.referrer)[0]
+    export_location(location_id)
     return redirect(f"{url}/{location_id}")
