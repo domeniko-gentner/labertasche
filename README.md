@@ -127,6 +127,35 @@ Inside your template `single.html`, or wherever you want to place comments, you 
 After that and configuring labertasche correctly, the json files should be placed in your data folder and all you got
 to do after that, is to rebuild Hugo and the new comment should appear. 
 
+## Watching for changes via systemd
+
+Hugo accepts the `--watch` command without the `server` option:    
+`hugo --watch` is valid and it will watch the directory and rebuild the files, if something changes. 
+Knowing that, we can build a systemd service from that, which could look like this:
+
+```
+[Unit]
+Description=Hugo
+After=syslog.target
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html/
+ExecStart=/usr/local/bin/hugo --watch --minify --noChmod --cleanDestinationDir --gc
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+`-noChmod` is a very important switch for this, because it stops the server from adjusting the file permissions.
+This comes in handy if you have a difference in user and group on your web server. `--cleanDestinationDir` and `--gc` 
+will clean old files out, so you don't have to worry about synching the public directory with the current content of
+your static or assets dir. There will also be no old CSS files be lying around when using fingerprinting.
 
 <!--suppress HtmlDeprecatedAttribute -->
 <p align="center">
