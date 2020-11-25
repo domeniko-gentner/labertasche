@@ -6,21 +6,20 @@
 #  *********************************************************************************/
 
 system:
-  web_url: "http://dev.localhost:1314/"                                 # Url where the comment system is served
-  blog_url: "http://dev.localhost:1313/"                                # Url of your website
+  web_url: "http://comments.example.com"                                # Url where the comment system is served
+  blog_url: "http://myblog.example.com"                                 # Url of your website
   cookie-domain: "dev.localhost"                                        # Url where the comment system is served
-  database_uri: "sqlite:///db/labertasche.db"                           # Database URI. See documentation. Default is sqlite.
-  secret: "6Gxvb52bIJCm2vfDsmWKzShKp1omrzVG"                            # CHANGE ME! THIS IS IMPORTANT!
-  output: "../../web/tuxstash.de/data/"                                 # Base path for the output json
+  database_uri: "sqlite:///db/labertasche.db"                           # Database URI. Default is sqlite.
+  secret: "123456"                                                      # CHANGE ME! THIS IS IMPORTANT!
+  output: "/path/to/hugo_dir/data"                                      # Base path for the output json
   debug: false                                                          # Leave this as is, this is for development.
   send_otp_to_publish: true                                             # Disables confirmation w/ OTP via mail
 
 gravatar:
   cache: true                                                           # Enable caching of gravatar images
-  static_dir: "../../web/tuxstash.de/static/images/gravatar/"           # Where to store cached images
+  static_dir: "/path/to/hugo_dir//static/images/gravatar/"              # Where to store cached images
   size: 256                                                             # only applies if images are cached,
                                                                         # otherwise use ?s=size at the end of the gravatar url
-
 dashboard:
   username: "admin"                                                     # CHANGE ME!
   password: "admin"                                                     # CHANGE ME!
@@ -28,7 +27,10 @@ dashboard:
 addons:
   smileys: true                                                         # Enable smiley replacements, set to false if unwanted
 
+# If you want to expand this, please use this list:
 # https://www.w3schools.com/charsets/ref_emoji_smileys.asp
+# You need to both versions, upper and lowercase, if you want both to works
+# This is a simple search and replace action
 smileys:
   ":)": "&#128512"
   ":d": "&#128513"
