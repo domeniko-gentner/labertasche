@@ -22,7 +22,7 @@ A comment system for Hugo, written in Python (and Javascript).
 * A public webserver capable of running Python, Apache/NGINX and/or gunicorn. This server does not need to be the same as the 
   server running the site, but it must have access to your CI/CD chain. Same server is of course easier to implement.
   
-## Depdencies
+## Dependencies
   
 * Python 3.8  
     * flask
