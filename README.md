@@ -14,13 +14,28 @@ A comment system for Hugo, written in Python (and Javascript).
 * EMail Blocklist 
 * Only outputs JSON, so templates can be done independently, enhancing customization. Using the comments via a partial
   template in Hugo is the recommended way. See below for integration code.
-
+* Antispam
+* Email Validation
 
 ## Requirements
 
-* A public webserver capable of running Apache/NGINX and/or gunicorn. This server does not need to be the same as the 
+* A public webserver capable of running Python, Apache/NGINX and/or gunicorn. This server does not need to be the same as the 
   server running the site, but it must have access to your CI/CD chain. Same server is of course easier to implement.
-
+  
+## Depdencies
+  
+* Python 3.8  
+    * flask
+    * flask-cors
+    * flask-sqlalchemy
+    * flask-login
+    * antispam
+    * pyyaml
+    * requests
+    * py3-validate-email
+* Recommended OS: Ubuntu 20, Debian Buster    
+* Recommended Server Software: Apache with libmodwsgi for Python 3
+* GoHugo, but the json can also be used by Javascript and other languages
 
 ## How does it work?
 
@@ -34,7 +49,7 @@ template.
 
 ## Setup
 
-Run `ssh://git@git.tuxstash.de:1235/gothseidank/labertasche.git` in the directory where you wish to host the comment 
+Run `git clone ssh://git@git.tuxstash.de:1235/gothseidank/labertasche.git` in the directory where you wish to host the comment 
 system. For example, `/var/www/html`, I also recommend making use of `/srv/` or `/opt/`. It depends on you.
 
 When everything is downloaded, create the directory `/etc/labertasche`. In this directory, we need 2 files:
@@ -43,14 +58,14 @@ When everything is downloaded, create the directory `/etc/labertasche`. In this 
 * mail_credentials.json - you can find an example in the root directory.
 
 Copy these files from the root directory of this app to the folder `/etc/labertasche`. Make sure to set ownership for 
-your user that runs your server later. I always do `chmown user:www-data`, so Apache has only group rights and enable read-only 
-for the Apache user.
+your user that runs your server later. I always do `chown user:www-data`, so Apache has only group rights and enable read-only 
+for the Apache user. I also recommend `chmod 700` for the directory and `chmod 600` for the files.
 
 Make sure to read the config and replace the values as needed. The mail configuration should need no explanation,
-`labertasche.yaml` has comments. Feel free to bug about more documentation regarding this. Pay special attention to 
+`labertasche.yaml` has comments. Feel free to bug me about more documentation regarding this. Pay special attention to 
 secrets and passwords.
 
-Now, for the server there are several options. I personally always host flask apps with Apache and mod_wsgi. 
+Now, for the server there are several options. I personally always host flask apps with Apache and libmodwsgi. 
 The config looks like this:
 
 * [Apache](docs/apache-config.md)
@@ -65,12 +80,12 @@ Once you can see the administrative page, you can start integrating it into Hugo
 
 ### Javascript
 
-In the project folder is a small javascript file. You will need to load this into Hugo, I suggest using Hugo's asset 
-pipeline to integrate it into your site. One thing is important to know: this script only does the bare bones post request 
-to your comment backend. Anything else must be done by yourself, but don't worry: The function is making use of a callback, 
-so you can control what happens during the various stages. 
-
-TODO: Example using the javascript properly
+In the project folder is a small javascript file. You will need to add this to Hugo. I suggest using Hugo's asset 
+pipeline to integrate it into your site and merge it with your current javascript. 
+One thing is important to know: this script only does the bare bones post request to the comment backend. 
+Anything else must be done by yourself, such as messages about minimum length etc. 
+But don't worry: The function is making use of a callback, where you can receive various messages with error codes
+and act on them. See the javascript file for an example callback. 
 
 ### Hugo templates
 
@@ -78,7 +93,8 @@ Remember the `labertasche.yaml` file? It asked you where the data folder of Hugo
 various json files into that folder, in folders that describe your sections. So, for each category/section of your blog
 where comments can be placed, one folder will be made. And for each page within that section it generates a json file.
 
-Now create a new partial called "comments.html" (or something else). Within that template the following structure is needed:
+Now create a new [partial](https://gohugo.io/templates/partials/) called "comments.html" (or something else). 
+Within that template the following structure is needed:
 
 ```
 {{ $location := .Scratch.Get "location" }} 
@@ -113,17 +129,18 @@ Here is a base skeleton to start out:
 ```
 
 Please take note of the `id` on each element, these are mandatory, as well as the function call for the `onclick` event.
-Again, style as needed and add more Javascript to your gusto.
+Again, style as needed and add more Javascript to your gusto. Make sure to implement the callback, otherwise the 
+Javascript will crash.
 
-
-Inside your template `single.html`, or wherever you want to place comments, you qwill also need this:
+Inside your template `single.html`, or wherever you want to place comments, you will also need this:
  
 ``` 
 {{ $file := replaceRE "^(.*)[\\/]$" "data$1.json" .Page.RelPermalink }}
 {{ .Scratch.Set "location" $file }}
 {{ partial "partials/comments" . }}
 ```
-
+There is no styling needed for this part!
+ 
 After that and configuring labertasche correctly, the json files should be placed in your data folder and all you got
 to do after that, is to rebuild Hugo and the new comment should appear. 
 
@@ -152,7 +169,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-`-noChmod` is a very important switch for this, because it stops the server from adjusting the file permissions.
+`-noChmod` is a very important switch for this, because it stops Hugo from adjusting the file permissions.
 This comes in handy if you have a difference in user and group on your web server. `--cleanDestinationDir` and `--gc` 
 will clean old files out, so you don't have to worry about synching the public directory with the current content of
 your static or assets dir. There will also be no old CSS files be lying around when using fingerprinting.
