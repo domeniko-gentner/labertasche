@@ -146,7 +146,7 @@ def check_and_insert_new_comment():
             print(e, file=stderr)
             return make_response(jsonify(status="post-internal-server-error"), 400)
 
-        export_location(location)
+        export_location(t_comment.location_id)
         return make_response(jsonify(status="post-success", comment_id=t_comment.comments_id), 200)
 
 
@@ -164,7 +164,7 @@ def check_confirmation_link(email_hash):
                 setattr(comment, "is_published", True)
             db.session.commit()
             url = f"{settings.system['blog_url']}{location.location}#comment_{comment.comments_id}"
-            export_location(location.location)
+            export_location(location.id_location)
             return redirect(url)
 
     return redirect(f"{settings.system['blog_url']}?cnf=true")
@@ -183,7 +183,7 @@ def check_deletion_link(email_hash):
             query.delete()
             db.session.commit()
             url = f"{settings.system['blog_url']}?deleted=true"
-            export_location(location.location)
+            export_location(location.id_location)
             return redirect(url)
 
     return redirect(f"{settings.system['blog_url']}?cnf=true")

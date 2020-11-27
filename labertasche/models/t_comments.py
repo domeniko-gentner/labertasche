@@ -19,7 +19,7 @@ class TComments(db.Model):
     comments_id = db.Column(db.Integer, primary_key=True)
 
     # foreign keys
-    location_id = db.Column(db.Text, ForeignKey('t_location.id_location'), nullable=False)
+    location_id = db.Column(db.Integer, ForeignKey('t_location.id_location'), nullable=False)
 
     # data
     email = db.Column(db.Text, nullable=False)
