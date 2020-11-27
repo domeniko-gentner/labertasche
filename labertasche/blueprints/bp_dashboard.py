@@ -45,55 +45,57 @@ def dashboard_index():
 
 
 @bp_dashboard.route('/review-spam/', methods=["POST", "GET"])
-@bp_dashboard.route('/review-spam/<int:location>', methods=["POST", "GET"])
+@bp_dashboard.route('/review-spam/<int:location_id>', methods=["POST", "GET"])
 @login_required
-def dashboard_review_spam(location=None):
+def dashboard_review_spam(location_id=None):
     all_locations = db.session.query(TLocation).all()
 
     # Check post
     if request.method == "POST":
-        location = request.form.get('selected_location')
+        location_id = request.form.get('selected_location')
 
     # no parameters found
-    if location is None:
-        return render_template("review-spam.html", locations=all_locations, selected=location)
+    if location_id is None:
+        return render_template("review-spam.html", locations=all_locations, selected=location_id)
 
     try:
-        if int(location) >= 1:
-            spam_comments = db.session.query(TComments).filter(TComments.location_id == location)\
+        if int(location_id) >= 1:
+            spam_comments = db.session.query(TComments).filter(TComments.location_id == location_id)\
                                                        .filter(TComments.is_spam == True)
-            return render_template("review-spam.html", locations=all_locations, selected=location,
+            return render_template("review-spam.html", locations=all_locations, selected=location_id,
                                    spam_comments=spam_comments)
     except ValueError:
         pass
 
-    return render_template("review-spam.html", locations=all_locations, selected=location)
+    export_location(location_id)
+    return render_template("review-spam.html", locations=all_locations, selected=location_id)
 
 
 @bp_dashboard.route('/manage-comments/', methods=["POST", "GET"])
-@bp_dashboard.route('/manage-comments/<int:location>', methods=["POST", "GET"])
+@bp_dashboard.route('/manage-comments/<int:location_id>', methods=["POST", "GET"])
 @login_required
-def dashboard_manage_regular_comments(location=None):
+def dashboard_manage_regular_comments(location_id=None):
     all_locations = db.session.query(TLocation).all()
 
     # Check post
     if request.method == "POST":
-        location = request.form.get('selected_location')
+        location_id = request.form.get('selected_location')
 
     # no parameters found
-    if location is None:
-        return render_template("manage-comments.html", locations=all_locations, selected=location)
+    if location_id is None:
+        return render_template("manage-comments.html", locations=all_locations, selected=location_id)
 
     try:
-        if int(location) >= 1:
-            spam_comments = db.session.query(TComments).filter(TComments.location_id == location) \
+        if int(location_id) >= 1:
+            spam_comments = db.session.query(TComments).filter(TComments.location_id == location_id) \
                 .filter(TComments.is_spam == False)
-            return render_template("manage-comments.html", locations=all_locations, selected=location,
+            return render_template("manage-comments.html", locations=all_locations, selected=location_id,
                                    spam_comments=spam_comments)
     except ValueError:
         pass
 
-    return render_template("manage-comments.html", locations=all_locations, selected=location)
+    export_location(location_id)
+    return render_template("manage-comments.html", locations=all_locations, selected=location_id)
 
 
 @bp_dashboard.route('/manage-mail/')

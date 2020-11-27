@@ -78,7 +78,5 @@ function labertasche_post_comment(btn, callback)
         })
 
     // Don't reload the page
-    if (btn) {
-        btn.preventDefault();
-    }
+    return false;
 }
