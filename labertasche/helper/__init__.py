@@ -141,8 +141,6 @@ def export_location(location_id: int) -> bool:
         # flush before query
         db.session.flush()
 
-        print(f"Location: {location_id}")
-
         # Query
         loc_query = db.session.query(TLocation).filter(TLocation.id_location == location_id).first()
 
@@ -157,7 +155,6 @@ def export_location(location_id: int) -> bool:
                 "comments": []
             }
             for comment in comments:
-                print(f"Data: {comment.comments_id}")
                 bundle['comments'].append(alchemy_query_to_dict(comment))
 
             path_loc = re_match(".*(?=/)", loc_query.location)[0]
@@ -170,7 +167,6 @@ def export_location(location_id: int) -> bool:
             folder.mkdir(parents=True, exist_ok=True)
             with out.open('w') as fp:
                 json.dump(bundle, fp)
-                print("Bundle here ---------- \n")
                 print(bundle)
 
             return True
