@@ -121,7 +121,7 @@ Of course you will also need a few inputs and a button that submits the data.
 Here is a base skeleton to start out:
 
 ```
-<div>
+<di id="labertasche-comment-section" data-remote="https://comments.example.com/comments/new">
     <input type="text" maxlength=100 placeholder="Enter Email" id="labertasche-mail">
     <textarea cols="10" rows="10" id="labertasche-text"></textarea>
     <input type="button" onclick="labertasche_post_comment(this, labertasche_callback);">
@@ -130,7 +130,8 @@ Here is a base skeleton to start out:
 
 Please take note of the `id` on each element, these are mandatory, as well as the function call for the `onclick` event.
 Again, style as needed and add more Javascript to your gusto. Make sure to implement the callback, otherwise the 
-Javascript will crash.
+Javascript will crash. The `data-remote=` needs to have the URL where you host this program, as well as the path to
+the API endpoint.
 
 Inside your template `single.html`, or wherever you want to place comments, you will also need this:
  
