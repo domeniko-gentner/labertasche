@@ -6,17 +6,15 @@
 //  *********************************************************************************/
 
 /*
-    Callback example.
-    Possible messages:
 
-    post-min-length
-    post-max-length
-    post-invalid-json
-    post-duplicate
-    post-internal-server-error
-    post-success
-    post-before-fetch
-
+//Callback example for post. Possible messages:
+// post-min-length
+// post-max-length
+// post-invalid-json
+// post-duplicate
+// post-internal-server-error
+// post-success
+// post-before-fetch
 function labertasche_callback(state)
 {
     if (state === "post-before-fetch"){
@@ -35,20 +33,33 @@ function labertasche_callback(state)
 
     }
 }
+
+// Callback for initiating and cancelling replies.
+// Posstible message: 'on' and 'off'
+function labertasche_reply_callback()
+{
+    if (state === "on"){
+    }
+
+    if (state === "off"){
+    }
+}
+
 */
 
 function labertasche_post_comment(btn, callback)
 {
     let remote = document.getElementById('labertasche-comment-section').dataset.remote;
-    let comment = document.getElementById('labertasche-text').value;
-    let mail = document.getElementById('labertasche-mail').value;
+    let comment = document.getElementById('labertasche-text').value.trim();
+    let mail = document.getElementById('labertasche-mail').value.trim();
+    let reply = document.getElementById('labertasche-replied-to');
 
     if (mail.length <= 0 || comment.length < 40){
         callback('post-min-length');
         if(btn) {
-            btn.preventDefault();
+            return false;
         }
-        return
+        return false;
     }
 
     callback('post-before-fetch');
@@ -65,7 +76,7 @@ function labertasche_post_comment(btn, callback)
             body: JSON.stringify({ "email": mail,
                 "content": comment,
                 "location": window.location.pathname,
-                "replied_to": null  // TODO: future feature: replies?
+                "replied_to": reply.value
             })
         })
         .then(async function(response){

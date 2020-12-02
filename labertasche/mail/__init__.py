@@ -14,7 +14,7 @@ from platform import system
 from smtplib import SMTP_SSL, SMTPHeloError, SMTPAuthenticationError, SMTPException
 from ssl import create_default_context
 from labertasche.settings import Settings
-from validate_email import validate_email
+from validate_email import validate_email_or_fail
 from secrets import token_urlsafe
 
 
@@ -91,10 +91,6 @@ class mail:
 
     def validate(self, addr):
         # validate email
-        is_valid = validate_email(email_address=addr,
-                                  check_regex=True,
-                                  check_mx=False,
-                                  dns_timeout=10,
-                                  use_blacklist=True,
-                                  debug=False)
+        is_valid = validate_email_or_fail(email_address=addr, check_regex=True, check_mx=False,
+                                          dns_timeout=10, use_blacklist=True, debug=False)
         return is_valid

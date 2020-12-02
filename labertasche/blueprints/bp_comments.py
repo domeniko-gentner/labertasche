@@ -64,11 +64,21 @@ def check_and_insert_new_comment():
             for key, value in smileys.items():
                 content = content.replace(key, value)
 
+        # Validate replied_to field is integer
+        replied_to = new_comment['replied_to']
+        try:
+            if replied_to:
+                replied_to = int(replied_to)
+
+        # not a valid id at all
+        except ValueError:
+            return make_response(jsonify(status="bad-reply"), 400)
+
         # Update values
         new_comment.update({"content": content})
         new_comment.update({"email": new_comment['email'].strip()})
         new_comment.update({"location": location})
-        new_comment.update({"replied_to": None})  # Not (yet?) implemented
+        new_comment.update({"replied_to": replied_to})
 
         # Check mail
         if not sender.validate(new_comment['email']):
@@ -92,6 +102,9 @@ def check_and_insert_new_comment():
             if not email.is_allowed:
                 is_spam = True
             if email.is_allowed:
+                # This forces the comment to be not spam if the address is in the allowed list,
+                # but the commenter will still need to confirm it to avoid brute
+                # force attacks against this feature
                 is_spam = False
 
         # Look for location
@@ -99,7 +112,7 @@ def check_and_insert_new_comment():
                               .filter(TLocation.location == new_comment['location'])
 
         if loc_query.first():
-            # Set existing location id
+            # Location exists, set existing location id
             new_comment.update({'location_id': loc_query.first().id_location})
             # TComments does not have this field
             new_comment.pop("location")
@@ -143,7 +156,9 @@ def check_and_insert_new_comment():
 
         except Exception as e:  # must be at bottom
             # mail(f"check_and_insert_new_comment has thrown an error: {e}", )
+            print("---------------------------------------------")
             print(e, file=stderr)
+            print("---------------------------------------------")
             return make_response(jsonify(status="post-internal-server-error"), 400)
 
         export_location(t_comment.location_id)

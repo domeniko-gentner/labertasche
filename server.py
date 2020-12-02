@@ -17,6 +17,7 @@ from labertasche.database import labertasche_db
 from labertasche.blueprints import bp_comments, bp_login, bp_dashboard
 from labertasche.helper import User
 from flask_login import LoginManager
+from flask_migrate import Migrate
 
 
 # Load settings
@@ -32,6 +33,9 @@ laberflask.config.update(dict(
     SQLALCHEMY_DATABASE_URI=settings.system['database_uri'],
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 ))
+
+# flask migrate
+migrate = Migrate(laberflask, labertasche_db, render_as_batch=True)
 
 # CORS
 CORS(laberflask, resources={r"/comments": {"origins": settings.system['blog_url']}})

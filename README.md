@@ -83,7 +83,7 @@ Once you can see the administrative page, you can start integrating it into Hugo
 In the project folder is a small javascript file. You will need to add this to Hugo. I suggest using Hugo's asset 
 pipeline to integrate it into your site and merge it with your current javascript. 
 One thing is important to know: this script only does the bare bones post request to the comment backend. 
-Anything else must be done by yourself, such as messages about minimum length etc. 
+Any frontend work must be done by yourself, such as messages about minimum length etc. 
 But don't worry: The function is making use of a callback, where you can receive various messages with error codes
 and act on them. See the javascript file for an example callback. 
 
@@ -101,8 +101,12 @@ Within that template the following structure is needed:
 {{ if (fileExists $location ) }}
     {{ $dataJ := getJSON  $location }}
         {{ range $dataJ.comments }}
-                   
+            {# HTML and template codes here #}       
         {{ end }}
+        {# This is to display replies to this comment, you can use them same variables #}
+        {{ range where $dataJ.replies "replied_to" .comment_id }}
+            {# HTML and template codes here for replies #}
+        {{end}}
 {{ end }}
 ```
 
@@ -125,6 +129,17 @@ Here is a base skeleton to start out:
     <input type="text" maxlength=100 placeholder="Enter Email" id="labertasche-mail">
     <textarea cols="10" rows="10" id="labertasche-text"></textarea>
     <input type="button" onclick="labertasche_post_comment(this, labertasche_callback);">
+</div>
+```
+
+This is the recommended element on each top post if you want to utilize replies:
+
+```
+<div class="">
+    <a href="#labertasche-comment-section"
+       onclick="labertasche_reply_to({{.comment_id}}, labertasche_reply_callback);">
+       reply
+    </a>
 </div>
 ```
 

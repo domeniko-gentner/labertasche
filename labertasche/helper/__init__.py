@@ -145,16 +145,18 @@ def export_location(location_id: int) -> bool:
         loc_query = db.session.query(TLocation).filter(TLocation.id_location == location_id).first()
 
         if loc_query:
-            print(f"has loc_query")
             comments = db.session.query(TComments).filter(TComments.is_spam != True) \
-                .filter(TComments.is_published == True) \
-                .filter(TComments.location_id == loc_query.id_location) \
-                .filter(TComments.replied_to == None)
+                                                  .filter(TComments.is_published == True) \
+                                                  .filter(TComments.location_id == loc_query.id_location)
 
             bundle = {
-                "comments": []
+                "comments": [],
+                "replies": []
             }
             for comment in comments:
+                if comment.replied_to is not None:
+                    bundle["replies"].append(alchemy_query_to_dict(comment))
+                    continue
                 bundle['comments'].append(alchemy_query_to_dict(comment))
 
             path_loc = re_match(".*(?=/)", loc_query.location)[0]
@@ -162,12 +164,10 @@ def export_location(location_id: int) -> bool:
             system = Settings().system
             out = Path(f"{system['output']}/{path_loc}.json")
             out = out.absolute()
-            print(out)
             folder = out.parents[0]
             folder.mkdir(parents=True, exist_ok=True)
             with out.open('w') as fp:
                 json.dump(bundle, fp)
-                print(bundle)
 
             return True
 

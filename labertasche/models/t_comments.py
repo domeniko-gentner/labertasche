@@ -28,7 +28,7 @@ class TComments(db.Model):
     is_published = db.Column(db.Boolean, nullable=False)
     is_spam = db.Column(db.Boolean, nullable=False)
     spam_score = db.Column(db.Float, nullable=False)
-    replied_to = db.Column(db.Boolean, nullable=True)
+    replied_to = db.Column(db.Integer, ForeignKey('t_comments.comments_id'), nullable=True)
     confirmation = db.Column(db.Text, nullable=True)
     deletion = db.Column(db.Text, nullable=True)
     gravatar = db.Column(db.Text, nullable=True)
