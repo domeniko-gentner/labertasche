@@ -47,6 +47,30 @@ function labertasche_reply_callback()
 
 */
 
+function labertasche_reply_to(comment_id, callback)
+{
+    let comments = document.getElementById('labertasche-comment-section');
+    if (comments){
+        if (document.getElementById('labertasche-replied-to')){
+            document.getElementById('labertasche-replied-to').remove();
+            callback('off', comment_id);
+            if (comment_id === -1){
+                return false;
+            }
+        }
+        let reply = document.createElement("input");
+        reply.setAttribute("type", "text");
+        reply.setAttribute("id", "labertasche-replied-to");
+        reply.classList.add("is-hidden");
+        reply.value = comment_id;
+        comments.appendChild(reply);
+        callback('on', comment_id);
+    }
+    else{
+        console.log("Missing text input with id labertasche-comment-section");
+    }
+}
+
 function labertasche_post_comment(btn, callback)
 {
     let remote = document.getElementById('labertasche-comment-section').dataset.remote;
