@@ -1,1 +1,1 @@
-sass labertasche.scss ../labertasche.css --color --watch --no-source-map
+sass labertasche.scss ../labertasche.css --color --watch --no-source-map --style compressed

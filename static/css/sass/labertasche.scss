@@ -38,14 +38,14 @@ $menu-item-hover-color: black;
 $menu-item-hover-background-color: #feda6a;
 $menu-label-font-size: 1em;
 
-@import "bulma/utilities/_all";
-@import "bulma/base/_all";
-@import "bulma/elements/_all";
-@import "bulma/form/_all";
-@import "bulma/components/_all";
-@import "bulma/grid/_all";
-@import "bulma/helpers/_all";
-@import "bulma/layout/_all";
+@import "bulma/sass/utilities/_all";
+@import "bulma/sass/base/_all";
+@import "bulma/sass/elements/_all";
+@import "bulma/sass/form/_all";
+@import "bulma/sass/components/_all";
+@import "bulma/sass/grid/_all";
+@import "bulma/sass/helpers/_all";
+@import "bulma/sass/layout/_all";
 
 /* open-sans-regular - latin */
 @font-face {
