@@ -1,3 +1,3 @@
-[submodule "css/sass/bulma"]
-	path = css/sass/bulma
+[submodule "static/css/sass/bulma"]
+	path = static/css/sass/bulma
 	url = git@github.com:jgthms/bulma.git
