@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "comment_id": 1,
+      "email": "commenter1@",
+      "content": "This is an example comment with over 40 characters.",
+      "created_on": "2020-12-04 12:23:14",
+      "replied_to": null,
+      "gravatar": "d9eef4df0ae5bfc1a9a9b1e39a99c07f"
+    }
+  ],
+  "replies": [
+    {
+      "comment_id": 2,
+      "email": "commenter2@",
+      "content": "This is an example reply, to test if this works.",
+      "created_on": "2020-12-04 12:24:19",
+      "replied_to": 1,
+      "gravatar": "d9eef4df0ae5bfc1a9a9b1e39a99c07f"
+    }
+  ]
+}

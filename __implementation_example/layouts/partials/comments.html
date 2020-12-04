@@ -1,0 +1,108 @@
+{{ $location := .Scratch.Get "location" }}
+<!--suppress XmlDuplicatedId -->
+<h1 class="is-uppercase has-text-white">comments</h1>
+
+<div class="mb-5" id="labertasche-comment-section" data-remote="http://dev.localhost:1314/comments/new">
+    <div class="control is-expanded">
+        <input onkeypress="labertasche_validate_mail();"
+               onfocusout="labertasche_validate_mail();"
+               maxlength="100"
+               id="labertasche-mail"
+               class="input"
+               type="email"
+               placeholder="joedoe@example.com">
+    </div>
+    <div class="control is-expanded mt-3">
+        <textarea oninput="labertasche_text_counter();"
+                  id="labertasche-text"
+                  class="textarea"
+                  rows="5"
+                  maxlength="1000"
+                  placeholder="40 minimum characters, type something nice..."></textarea>
+        <p id="labertasche-text-helper"
+           class="help is-danger">Characters: <span id="labertasche-counter">0/1000</span></p>
+    </div>
+    <div class="control mt-3">
+        <button onclick="labertasche_post_comment(this, labertasche_post_callback);"
+                class="button is-warning px-6 mr-4 is-medium"
+                id="labertasche-comment-button">
+            <span>Comment</span>
+        </button>
+    </div>
+</div>
+
+<article>
+    <div class="media mb-5 brdr-yayellow my-shadow-subtle bg-compliment">
+        <figure class="media-left ml-0 mb-0">
+            <p class="image is-128x128">
+                <img alt="gravatar portrait" src="/images/default.jpg">
+            </p>
+        </figure>
+        <div class="media-content">
+            <div class="content mr-5 mt-2 has-text-left">
+                Pinned by <span class="fg-yellow">admin@example.com</span>
+                <br><br>
+                <span class="mt-5 has-text-justified">
+                    <span>
+                       Come join the discussion and write something nice. You will have to confirm your comment by mail,
+                       so make sure it is legit and not a throwaway. Only the name part of it will be displayed, so
+                       don't worry about spam.
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+</article>
+
+{{ if (fileExists $location ) }}
+{{ $dataJ := getJSON  $location }}
+{{ range $dataJ.comments }}
+<article>
+    <div class="media mb-5 brdr-yayellow my-shadow-subtle bg-compliment">
+        <figure class="media-left ml-0 mb-0">
+            <p class="image is-128x128">
+                <img alt="gravatar portrait" src="https://www.gravatar.com/avatar/{{.gravatar}}.jpg">
+            </p>
+        </figure>
+        <div class="media-content">
+            <div class="content mr-5 mt-2">
+                <a id="comment_{{.comment_id}}" href="#comment_{{.comment_id}}">#{{.comment_id}}</a>
+                Posted by <span class="fg-yellow">{{.email}}</span> <small>on {{.created_on}}</small>
+                <br><br>
+                <span class="mt-5">
+                           {{.content}}
+                        </span>
+            </div>
+            <div class="is-fullwidth bg-yayellow has-text-centered">
+                <a class="has-text-black" href="#labertasche-comment-section"
+                   onclick="labertasche_reply_to({{.comment_id}}, labertasche_reply_callback);">
+                    reply
+                </a>
+            </div>
+        </div>
+    </div>
+</article>
+{{ range where $dataJ.replies "replied_to" .comment_id }}
+<article>
+    <div class="media margin-left-128 mb-5 brdr-yayellow my-shadow-subtle bg-compliment">
+        <figure class="media-left ml-0 mb-0">
+            <p class="image is-128x128">
+                <img alt="gravatar portrait" src="https://www.gravatar.com/avatar/{{.gravatar}}.jpg">
+            </p>
+        </figure>
+        <div class="media-content">
+            <div class="content mr-5 mt-2">
+                <a id="comment_{{.comment_id}}" href="#comment_{{.comment_id}}">#{{.comment_id}}</a>
+                Posted by <span class="fg-yellow">{{.email}}</span> <small>on {{.created_on}}&nbsp;
+            </small>
+                <br><br>
+                <span class="mt-5">
+                    {{.content}}
+                </span>
+            </div>
+        </div>
+    </div>
+</article>
+{{end}}
+{{ end }}
+{{ end }}

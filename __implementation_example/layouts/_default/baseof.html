@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <link rel="stylesheet" href="/css/labertasche.css" media="screen">
+    <title>Labertasche Example</title>
+</head>
+<body class="is-family-sans-serif bg-darkslate">
+<section>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <a class="navbar-item is-size-4" href="/">
+            &nbsp;Labertasche Example
+        </a>
+        <div class="navbar-start"></div>
+        <div class="navbar-end"></div>
+    </nav>
+    <div class="p-4">
+        {{ block "main" . }}
+        {{ end }}
+    </div>
+</section>
+<script defer src="/js/labertasche.js"></script>
+<script defer src="/js/mysite.js"></script>
+<script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Comments
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("cnf") === "true"){
+            labertasche_comment_not_found();
+        }
+        if (urlParams.get("deleted") === "true"){
+            labertasche_comment_deleted();
+        }
+    });
+</script>
+<!-- Modal for notifications -->
+<div class="modal" id="labertasche-modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="content p-5 mb-0 is-rounded bg-yayellow has-text-black">
+            <p class="title">Labertasche</p>
+        </div>
+        <div class="content p-5 mb-0 bg-deepmatte has-text-white" id="labertasche-modal-text">
+
+        </div>
+        <div class="content p-5 bg-deepmatte has-text-white border-top">
+            <button onclick="labertasche_modal_hide();" class="button is-warning" aria-label="close">
+                OK
+            </button>
+        </div>
+    </div>
+    <button onclick="labertasche_modal_hide();" class="modal-close is-large" aria-label="close"></button>
+</div>
+</body>
+</html>

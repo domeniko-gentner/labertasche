@@ -1,0 +1,7 @@
+{{ block "frontpage_article" . }}
+<article class="p-3 bg-deepmatte brdr-yayellow">
+    <p class="title has-text-white">{{ .Title }}</p>
+    <p>{{ .Summary }}</p>
+    <p><a href="{{.RelPermalink}}">Read the whole article...</a></p>
+</article>
+{{ end }}

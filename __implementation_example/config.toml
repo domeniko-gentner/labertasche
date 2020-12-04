@@ -1,0 +1,4 @@
+baseURL = "http://dev.localhost/"
+languageCode = "en-us"
+disableKinds = ["taxonomy", "term"]
+ignoreErrors = ["error-disable-taxonomy"]

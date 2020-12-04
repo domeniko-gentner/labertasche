@@ -1,0 +1,12 @@
+{{ define "main" }}
+<div class="container">
+    <div class="content">
+        {{ $last_article := (.Site.GetPage "blog" .Section).Pages.ByPublishDate }}
+            {{  range last 2 $last_article }}
+        <div class="mt-4">
+            {{ .Render "frontpage_article" }}
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,13 @@
+{{ define "main" }}
+<article class="container p-3 bg-deepmatte brdr-yayellow">
+    <p class="title has-text-white">{{ .Title }}</p>
+    <div class="content has-text-justified has-text-white">{{ .Content }}</div>
+</article>
+<article class="container p-3 bg-deepmatte brdr-yayellow mt-5">
+    <div>
+        {{ $file := replaceRE "^(.*)[\\/]$" "data$1.json" .Page.RelPermalink }}
+        {{ .Scratch.Set "location" $file }}
+        {{ partial "partials/comments" . }}
+    </div>
+</article>
+{{ end }}
