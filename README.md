@@ -101,12 +101,12 @@ Within that template the following structure is needed:
 {{ if (fileExists $location ) }}
     {{ $dataJ := getJSON  $location }}
         {{ range $dataJ.comments }}
-            {# HTML and template codes here #}       
-        {{ end }}
-        {# This is to display replies to this comment, you can use them same variables #}
-        {{ range where $dataJ.replies "replied_to" .comment_id }}
+          {# HTML and template codes here #}
+          {# This is to display replies to this comment, you can use them same variables #}
+          {{ range where $dataJ.replies "replied_to" .comment_id }}
             {# HTML and template codes here for replies #}
-        {{end}}
+          {{end}}       
+        {{ end }}
 {{ end }}
 ```
 
