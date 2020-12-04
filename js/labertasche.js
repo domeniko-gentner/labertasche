@@ -36,7 +36,7 @@ function labertasche_callback(state)
 
 // Callback for initiating and cancelling replies.
 // Posstible message: 'on' and 'off'
-function labertasche_reply_callback()
+function labertasche_reply_callback(state)
 {
     if (state === "on"){
     }
