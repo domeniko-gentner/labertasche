@@ -86,6 +86,12 @@ function labertasche_post_comment(btn, callback)
         return false;
     }
 
+    // When there is no reply, use null, otherwise an error occurs on chrome
+    let reply_value = null
+    if (reply != null){
+        reply_value = reply.value;
+    }
+
     callback('post-before-fetch');
     fetch(remote,
         {
@@ -100,7 +106,7 @@ function labertasche_post_comment(btn, callback)
             body: JSON.stringify({ "email": mail,
                 "content": comment,
                 "location": window.location.pathname,
-                "replied_to": reply.value
+                "replied_to": reply_value
             })
         })
         .then(async function(response){
