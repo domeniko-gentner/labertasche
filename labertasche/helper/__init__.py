@@ -92,11 +92,10 @@ def check_gravatar(email: str):
         response = requests.get(url)
         if response.ok:
             outfile = Path(f"{options['static_dir']}/{gravatar_hash}.jpg")
-            if not outfile.exists():
-                with outfile.open('wb') as fp:
-                    response.raw.decode_content = True
-                    for chunk in response:
-                        fp.write(chunk)
+            with outfile.open('wb') as fp:
+                response.raw.decode_content = True
+                for chunk in response:
+                    fp.write(chunk)
 
     return gravatar_hash
 
