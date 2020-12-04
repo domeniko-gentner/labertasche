@@ -13,7 +13,7 @@ Please also add
 
 to
 
-* Windows: `C:\windows\system32\drivers\etc\hosts`
+* Windows: `%WINDIR%\system32\drivers\etc\hosts`
 * MAC/Linux: `/etc/hosts`
 
 before running the example. 
