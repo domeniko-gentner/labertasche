@@ -34,8 +34,14 @@ laberflask.config.update(dict(
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 ))
 
-# flask migrate
+# Flask migrate
+
 migrate = Migrate(laberflask, labertasche_db, render_as_batch=True)
+
+# Initialize ORM
+labertasche_db.init_app(laberflask)
+with laberflask.app_context():
+    labertasche_db.create_all()
 
 # CORS
 CORS(laberflask, resources={r"/comments": {"origins": settings.system['blog_url']}})
@@ -49,10 +55,6 @@ laberflask.register_blueprint(bp_login)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
-# Initialize ORM
-labertasche_db.init_app(laberflask)
-with laberflask.app_context():
-    labertasche_db.create_all()
 
 # Set up login manager
 loginmgr = LoginManager(laberflask)

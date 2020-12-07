@@ -7,6 +7,7 @@
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
 from labertasche.database import labertasche_db as db
+from sqlalchemy import ForeignKey
 
 
 class TLocation(db.Model):
@@ -19,3 +20,4 @@ class TLocation(db.Model):
 
     # data
     location = db.Column(db.Text, nullable=False, unique=True)
+    project_id = db.Column(db.Integer, ForeignKey('t_projects.id_project'), nullable=False)

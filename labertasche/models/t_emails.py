@@ -7,6 +7,7 @@
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
 from labertasche.database import labertasche_db as db
+from sqlalchemy import ForeignKey
 
 
 class TEmail(db.Model):
@@ -21,3 +22,4 @@ class TEmail(db.Model):
     email = db.Column(db.Integer, unique=True)
     is_blocked = db.Column(db.Boolean)
     is_allowed = db.Column(db.Boolean)
+    project_id = db.Column(db.Integer, ForeignKey('t_projects.id_project'), nullable=False)
