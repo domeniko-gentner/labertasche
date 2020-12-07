@@ -6,3 +6,4 @@ db/labertasche.db-wal
 output
 /output/
 *.sql
+*.old

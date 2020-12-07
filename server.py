@@ -15,6 +15,7 @@ from sqlalchemy.engine import Engine
 from labertasche.settings import Settings
 from labertasche.database import labertasche_db
 from labertasche.blueprints import bp_comments, bp_login, bp_dashboard
+from labertasche.models import TProjects
 from labertasche.helper import User
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -35,13 +36,20 @@ laberflask.config.update(dict(
 ))
 
 # Flask migrate
-
 migrate = Migrate(laberflask, labertasche_db, render_as_batch=True)
 
 # Initialize ORM
 labertasche_db.init_app(laberflask)
 with laberflask.app_context():
     labertasche_db.create_all()
+    project = labertasche_db.session.query(TProjects).filter(TProjects.id_project == 1).first()
+    if not project:
+        default_project = {
+            "id_project": 1,
+            "name": "default"
+        }
+        labertasche_db.session.add(TProjects(**default_project))
+        labertasche_db.session.commit()
 
 # CORS
 CORS(laberflask, resources={r"/comments": {"origins": settings.system['blog_url']}})
