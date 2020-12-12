@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block main %}
+    <div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
+    <h1 class="is-size-2 mb-3 is-uppercase">Select project</h1>
+        <div class="columns is-multiline">
+            <div class="column is-4">
+                <div class="card my-shadow-subtle brdr-darkslate">
+                    <div class="card-header">
+                        <div class="card-header-title">
+                            <p class="is-size-4 is-uppercase">
+                                NEW PROJECT
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-content has-text-white">
+                        <div class="level is-mobile">
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading is-capitalized">Comments</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">n/a</p>
+                                </div>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading is-capitalized">Unpublished</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">n/a</p>
+                                </div>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div class="ml-4">
+                                    <p class="heading is-capitalized">Spam</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">n/a</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-footer-item">
+                            <a class="has-text-weight-bold has-text-black is-uppercase"
+                               onclick="show_modal('modal-new-project');"
+                               href="#">NEW</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% for project in projects %}
+            <div class="column is-4">
+                <div class="card my-shadow-subtle brdr-darkslate">
+                    <div class="card-header">
+                        <div class="card-header-title">
+                            <p class="is-size-4 is-uppercase">
+                               {{ project['name'] }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-content has-text-white">
+                        <div class="level is-mobile">
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading is-capitalized">Comments</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ project['total_comments'] }}</p>
+                                </div>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading is-capitalized">Unpublished</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ project['total_unpublished'] }}</p>
+                                </div>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div class="ml-4">
+                                    <p class="heading is-capitalized">Spam</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ project['total_spam'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-footer-item">
+                            <a class="has-text-weight-bold has-text-black is-uppercase" href="#">EDIT</a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a class="has-text-weight-bold has-text-black is-uppercase" href="#">DELETE</a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a class="has-text-weight-bold has-text-black is-uppercase"
+                               href="{{ url_for('bp_dashboard.dashboard_project_index', project=project['name'])}}">VIEW</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div class="modal is-active" id="modal-new-project">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">New Project</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <label for="project-name" class="has-text-black">PROJECT NAME
+                    <input class="input is-success"
+                           type="text"
+                           name="project-name"
+                           id="project-name"
+                           placeholder="Type a name without special characters.."
+                    >
+                </label>
+                <p id="new-project-too-short" class="is-hidden help has-text-danger">Input too short. Needs at least 1 character!</p>
+                <p id="new-project-invalid-name" class="is-hidden help has-text-danger">Input is invalid. Please use only a-z and 0-9.</p>
+            </section>
+            <footer class="modal-card-foot">
+                <button id="modal-ok" onclick="new_project_save()" class="button is-success">Save</button>
+                <button id="modal-cancel" onclick="hide_modal('modal-new-project')" class="button is-danger">Cancel</button>
+            </footer>
+        </div>
+    </div>
+{% endblock %}

@@ -6,11 +6,11 @@
 #  * _repo    : https://git.tuxstash.de/gothseidank/labertasche
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, make_response, jsonify
 from flask_login import login_required
 from labertasche.database import labertasche_db as db
-from labertasche.models import TLocation, TComments, TEmail
-from labertasche.helper import dates_of_the_week, export_location
+from labertasche.models import TLocation, TComments, TEmail, TProjects
+from labertasche.helper import dates_of_the_week, export_location, get_id_from_project_name
 from sqlalchemy import func
 import re
 
@@ -18,15 +18,48 @@ import re
 bp_dashboard = Blueprint("bp_dashboard", __name__, url_prefix='/dashboard')
 
 
-@bp_dashboard.route('/')
+@bp_dashboard.route("/")
 @login_required
 def dashboard_index():
+    t_projects = db.session.query(TProjects).all()
+    projects = list()
+    for each in t_projects:
+        comments = db.session.query(TComments).filter(TComments.project_id == each.id_project) \
+            .filter(TComments.is_published == True) \
+            .filter(TComments.is_spam == False).count()
+        unpub_comments = db.session.query(TComments).filter(TComments.project_id == each.id_project) \
+            .filter(TComments.is_spam == False) \
+            .filter(TComments.is_published == False).count()
+        spam = db.session.query(TComments).filter(TComments.project_id == each.id_project) \
+            .filter(TComments.is_spam == True).count()
+
+        projects.append(dict({
+            "id_project": each.id_project,
+            "name": each.name,
+            "total_comments": comments,
+            "total_spam": spam,
+            "total_unpublished": unpub_comments
+        }))
+    return render_template('project_overview.html', projects=projects)
+
+
+@bp_dashboard.route("/project/new", methods=['POST'])
+@login_required
+def dashboard_new_project():
+    return make_response(jsonify(status='too-short'), 200)
+
+
+@bp_dashboard.route('/<project>/')
+@login_required
+def dashboard_project_index(project: str):
+    proj_id = get_id_from_project_name(project)
     dates = dates_of_the_week()
     spam = list()
     published = list()
     unpublished = list()
     for each in dates:
-        spam_comments = db.session.query(TComments).filter(func.DATE(TComments.created_on) == each.date())\
+        spam_comments = db.session.query(TComments).filter(TComments.project_id == proj_id)\
+                                                   .filter(func.DATE(TComments.created_on) == each.date())\
                                                    .filter(TComments.is_spam == True).all()
 
         pub_comments = db.session.query(TComments).filter(func.DATE(TComments.created_on) == each.date()) \

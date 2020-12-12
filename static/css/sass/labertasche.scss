@@ -23,7 +23,10 @@ $navbar-burger-color: black;
 $footer-background-color: #393f4d;
 $footer-color: true;
 
-$card-header-color: white;
+$card-header-color: black;
+$card-header-background-color: #feda6a;
+$card-footer-background-color: #feda6a;
+$card-background-color: grey;
 
 $table-head-background-color: #feda6a;
 $table-body-background-color: white;
@@ -78,10 +81,21 @@ canvas{
   border: 2px solid #feda6a;
 }
 
+.brdr-darkslate{
+  border: 2px solid #1d1e22;
+}
+
+
 .bg-compliment{
   background-color: #384667;
 }
 
 .fg-yellow{
   color: #feda6a;
+}
+
+.my-shadow-subtle{
+  -webkit-box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.75);
+  -moz-box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.75);
+  box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.75);
 }

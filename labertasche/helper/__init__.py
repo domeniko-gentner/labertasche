@@ -8,7 +8,7 @@
 #  *********************************************************************************/
 import datetime
 import json
-from labertasche.models import TLocation, TComments
+from labertasche.models import TLocation, TComments, TProjects
 from labertasche.settings import Settings
 from labertasche.database import labertasche_db as db
 from functools import wraps
@@ -192,3 +192,13 @@ def dates_of_the_week():
         date_list.append(monday)
     date_list.append((monday + datetime.timedelta(days=1, hours=23, minutes=59, seconds=59)))
     return date_list
+
+
+def get_id_from_project_name(name: str) -> int:
+    """
+    Returns the id of a project name
+    :param name: The display name of the project
+    :return: the ID of the project
+    """
+    proj = db.session.query(TProjects).filter(TProjects.name == name).first()
+    return proj.id_project
