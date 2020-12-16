@@ -19,7 +19,7 @@
 <body>
 <section class="hero bg-yayellow is-fullheight">
     <div class="hero-head">
-        <a target="_blank" rel="noopener nofollow noreferrer"
+        <a target="_blank" href="https://github.com/domeniko-gentner/labertasche" rel="noopener nofollow noreferrer"
            class="button is-info is-inverted is-medium">
                 <span class="icon mr-2">
                   <i class="mdi mdi-36px mdi-github"></i>
@@ -30,10 +30,13 @@
     <div class="hero-body has-text-black">
         <div class="container has-text-centered">
             <p class="title">Labertasche Login</p>
+            <!--suppress HtmlUnknownTarget -->
             <form method="POST" action="/login">
                 <div class="field">
                     <div class="control is-expanded has-icons-left">
-                        <input class="input" name="username" type="text">
+                        <label for="username" class="help has-text-left has-text-black">
+                            <input class="input" name="username" type="text" placeholder="username">
+                        </label>
                         <span class="icon is-small is-left">
                             <span class="mdi mdi-24px mdi-shield-account"></span>
                         </span>
@@ -41,7 +44,9 @@
                 </div>
                 <div class="field">
                     <div class="control is-expanded has-icons-left">
-                        <input class="input" name="password" type="password">
+                        <label for="password">
+                            <input class="input" name="password" type="password" placeholder="password">
+                        </label>
                         <span class="icon is-small is-left">
                             <span class="mdi mdi-24px mdi-shield-key"></span>
                         </span>

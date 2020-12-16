@@ -28,3 +28,4 @@ class Settings:
         self.gravatar = conf['gravatar']
         self.addons = conf['addons']
         self.smileys = conf['smileys']
+        self.projects = conf['projects']

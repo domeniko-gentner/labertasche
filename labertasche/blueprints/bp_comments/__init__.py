@@ -48,8 +48,8 @@ def check_and_insert_new_comment():
 
         # Validate json and check length again
         if not is_valid_json(new_comment) or \
-           len(new_comment['content']) < 40 or \
-           len(new_comment['email']) < 5:
+                len(new_comment['content']) < 40 or \
+                len(new_comment['email']) < 5:
             print("too short", file=stderr)
             return make_response(jsonify(status='post-invalid-json'), 400)
 
@@ -108,8 +108,8 @@ def check_and_insert_new_comment():
                 is_spam = False
 
         # Look for location
-        loc_query = db.session.query(TLocation)\
-                              .filter(TLocation.location == new_comment['location'])
+        loc_query = db.session.query(TLocation) \
+            .filter(TLocation.location == new_comment['location'])
 
         if loc_query.first():
             # Location exists, set existing location id
@@ -131,6 +131,7 @@ def check_and_insert_new_comment():
             new_comment.pop("location")
 
         # insert comment
+        # noinspection PyBroadException
         try:
             new_comment.update({"is_published": False})
             new_comment.update({"created_on": default_timestamp()})
@@ -154,11 +155,7 @@ def check_and_insert_new_comment():
             print(f"Duplicate from {request.environ['REMOTE_ADDR']}, error is:\n{e}", file=stderr)
             return make_response(jsonify(status="post-duplicate"), 400)
 
-        except Exception as e:  # must be at bottom
-            # mail(f"check_and_insert_new_comment has thrown an error: {e}", )
-            print("---------------------------------------------")
-            print(e, file=stderr)
-            print("---------------------------------------------")
+        except Exception:  # must be at bottom
             return make_response(jsonify(status="post-internal-server-error"), 400)
 
         export_location(t_comment.location_id)

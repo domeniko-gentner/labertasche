@@ -1,9 +1,9 @@
 .idea
 __pycache__/
 venv
-db/labertasche.db-shm
-db/labertasche.db-wal
+db/*.db
+db/*.db-shm
+db/*.db-wal
 output
 /output/
-*.sql
 *.old

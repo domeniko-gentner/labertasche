@@ -33,7 +33,7 @@
                         {% if each.is_blocked %}
                             <a title="Email is currently blocked. Click to unblock."
                                class="has-text-black"
-                               href="/dashboard/toggle-mail-allowed/{{ each.id_email }}">
+                               href="/api/mail-toggle-status/{{ each.id_email }}">
                                 <i class="mdi mdi-24px mdi-check"></i>
                             </a>
                         {% else %}
@@ -49,7 +49,7 @@
                     <p class="has-text-centered">
                         <a title="Delete entry, this resets the reputation"
                            class="has-text-danger-dark"
-                           href="/dashboard/reset-mail-reputation/{{ each.id_email }}">
+                           href="/api/mail-reset-reputation/{{ each.id_email }}">
                             <i class="mdi mdi-24px mdi-trash-can"></i>
                         </a>
                     </p>

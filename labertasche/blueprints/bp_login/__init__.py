@@ -19,7 +19,7 @@ bp_login = Blueprint("bp_login", __name__)
 @bp_login.route('/', methods=['GET'])
 def show_login():
     if current_user.is_authenticated:
-        return redirect(url_for('bp_dashboard.dashboard_index'))
+        return redirect(url_for('bp_dashboard.dashboard_project_list'))
     return render_template('login.html')
 
 
@@ -32,7 +32,7 @@ def login():
 
         if check_auth(username, password):
             login_user(User(0), remember=True)
-            return redirect(url_for('bp_dashboard.dashboard_index'))
+            return redirect(url_for('bp_dashboard.dashboard_project_list'))
 
     # Redirect get request to the login page
     return redirect(url_for('bp_login.show_login'))

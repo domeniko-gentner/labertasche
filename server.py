@@ -14,7 +14,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from labertasche.settings import Settings
 from labertasche.database import labertasche_db
-from labertasche.blueprints import bp_comments, bp_login, bp_dashboard
+from labertasche.blueprints import bp_comments, bp_login, bp_dashboard, bp_jsconnector
 from labertasche.models import TProjects
 from labertasche.helper import User
 from flask_login import LoginManager
@@ -27,7 +27,9 @@ settings = Settings()
 # Flask App
 laberflask = Flask(__name__)
 laberflask.config.update(dict(
-    SESSION_COOKIE_DOMAIN=settings.system['cookie-domain'],
+    SESSION_COOKIE_DOMAIN=settings.system['cookie_domain'],
+    SESSION_COOKIE_SECURE=settings.system['cookie_secure'],
+    REMEMBER_COOKIE_SECURE=settings.system['cookie_secure'],
     DEBUG=settings.system['debug'],
     SECRET_KEY=settings.system['secret'],
     TEMPLATES_AUTO_RELOAD=True,
@@ -58,6 +60,7 @@ CORS(laberflask, resources={r"/comments": {"origins": settings.system['blog_url'
 laberflask.register_blueprint(bp_comments)
 laberflask.register_blueprint(bp_dashboard)
 laberflask.register_blueprint(bp_login)
+laberflask.register_blueprint(bp_jsconnector)
 
 # Disable Werkzeug's verbosity during development
 log = logging.getLogger('werkzeug')

@@ -38,18 +38,19 @@
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
                                onclick="show_modal('modal-new-project');"
+                               data-tippy-content="Create a new project"
                                href="#">NEW</a>
                         </div>
                     </div>
                 </div>
             </div>
-        {% for project in projects %}
+        {% for each in projects %}
             <div class="column is-4">
                 <div class="card my-shadow-subtle brdr-darkslate">
                     <div class="card-header">
                         <div class="card-header-title">
                             <p class="is-size-4 is-uppercase">
-                               {{ project['name'] }}
+                               {{ each['name'] }}
                             </p>
                         </div>
                     </div>
@@ -58,33 +59,43 @@
                             <div class="level-item has-text-centered">
                                 <div>
                                     <p class="heading is-capitalized">Comments</p>
-                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ project['total_comments'] }}</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ each['total_comments'] }}</p>
                                 </div>
                             </div>
                             <div class="level-item has-text-centered">
                                 <div>
                                     <p class="heading is-capitalized">Unpublished</p>
-                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ project['total_unpublished'] }}</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ each['total_unpublished'] }}</p>
                                 </div>
                             </div>
                             <div class="level-item has-text-centered">
                                 <div class="ml-4">
                                     <p class="heading is-capitalized">Spam</p>
-                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ project['total_spam'] }}</p>
+                                    <p class="is-size-4 has-text-weight-bold has-text-white">{{ each['total_spam'] }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="card-footer-item">
-                            <a class="has-text-weight-bold has-text-black is-uppercase" href="#">EDIT</a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a class="has-text-weight-bold has-text-black is-uppercase" href="#">DELETE</a>
+                        <div class="card-footer-item has-background-danger-dark">
+                            <a class="has-text-weight-bold has-text-white is-uppercase"
+                               data-tippy-content="Delete the project and all of its content"
+                               href="{{ url_for('bp_jsconnector.api_delete_project', project=each['name']) }}">DELETE</a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
-                               href="{{ url_for('bp_dashboard.dashboard_project_index', project=project['name'])}}">VIEW</a>
+                               data-tippy-content="Edit the name of the project and it's properties"
+                               href="#">EDIT</a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a class="has-text-weight-bold has-text-black is-uppercase"
+                               data-tippy-content="Export all comments to Hugo.<br>This is normally not needed."
+                               href="#">EXPORT</a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a class="has-text-weight-bold has-text-black is-uppercase"
+                               data-tippy-content="Manage this project"
+                               href="{{ url_for('bp_dashboard.dashboard_project_stats', project=each['name']) }}">VIEW</a>
                         </div>
                     </div>
                 </div>
@@ -92,7 +103,7 @@
         {% endfor %}
         </div>
     </div>
-    <div class="modal is-active" id="modal-new-project">
+    <div class="modal" id="modal-new-project">
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
@@ -117,4 +128,33 @@
             </footer>
         </div>
     </div>
+    <div class="modal" id="modal-project-not-found">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head has-background-danger">
+                <p class="modal-card-title has-text-white">ERROR</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body has-text-black">
+                The specified project was not found! Did you delete it? Try refreshing the page.<br>
+                If you believe this to be a bug, please report it
+                <a  class="has-text-info"
+                    href="https://github.com/domeniko-gentner/labertasche/issues"
+                   target="_blank" rel="nofollow noopener norefferer">
+                    here
+                </a>.
+            </section>
+            <footer class="modal-card-foot">
+                <button id="modal-ok" onclick="hide_modal('modal-project-not-found')" class="button is-success">
+                    OK
+                </button>
+            </footer>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    tippy('[data-tippy-content]', {
+        allowHTML: true,
+        delay: 500
+    });
 {% endblock %}

@@ -25,18 +25,20 @@
             </a>
             <div class="navbar-start"></div>
             <div class="navbar-end">
-                <a class="navbar-item" href="/dashboard/review-spam/">
+                {% if project is defined %}
+                <a class="navbar-item" href="/dashboard/{{ project }}/manage-spam/">
                     <span class="icon"><i class="mdi mdi-24px mdi-space-invaders"></i></span>
-                    &nbsp;REVIEW SPAM
+                    &nbsp;MANAGE SPAM
                 </a>
-                <a class="navbar-item" href="/dashboard/manage-comments/">
+                <a class="navbar-item" href="/dashboard/{{ project }}/manage-comments/">
                     <span class="icon"><i class="mdi mdi-24px mdi-comment"></i></span>
                     &nbsp;MANAGE COMMENTS
                 </a>
-                <a class="navbar-item" href="/dashboard/manage-mail">
+                <a class="navbar-item" href="/dashboard/{{ project }}/manage-mail">
                     <span class="icon"><i class="mdi mdi-24px mdi-email"></i></span>
                     &nbsp;MANAGE EMAIL ADDRESSES
                 </a>
+                {% endif %}
                 <a class="navbar-item" href="/logout/">
                     <span class="icon"><i class="mdi mdi-24px mdi-account-cancel"></i></span>
                     &nbsp;LOGOUT
@@ -49,5 +51,19 @@
         </section>
 <script defer src="/static/js/dashboard.js"></script>
 <script defer src="/static/js/Chart.bundle.min.js"></script>
+<script defer src="https://unpkg.com/@popperjs/core@2"></script>
+<script defer src="https://unpkg.com/tippy.js@6"></script>
+<script defer>
+        document.addEventListener('DOMContentLoaded', () => {
+
+        // Comments
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("error") === "404"){
+            show_modal('modal-project-not-found');
+        }
+        {% block javascript %}
+        {% endblock %}
+        });
+</script>
 </body>
 </html>

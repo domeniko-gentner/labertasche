@@ -5,6 +5,9 @@
 // #  * _license : This project is under MIT License
 // #  *********************************************************************************/
 
+// ------------------------------------------------------
+// Called when search for mail addresses in manage mail
+// ------------------------------------------------------
 function dashboard_mailsearch(search_txt)
 {
     let el = document.getElementById('mail-table');
@@ -20,19 +23,23 @@ function dashboard_mailsearch(search_txt)
     }
 }
 
+// ------------------------------------------------------
+// Called when a new project is created,
+// posts it to the server
+// ------------------------------------------------------
 function new_project_save() {
     let modal_ok = document.getElementById('modal-ok');
     let modal_cancel = document.getElementById('modal-cancel');
-    let short_help = document.getElementById('new-project-too-short');
+    let short_help_short = document.getElementById('new-project-too-short');
     let short_help_invalid = document.getElementById('new-project-invalid-name');
     let name = document.getElementById('project-name').value
 
-    short_help.classList.add('is-hidden');
+    short_help_short.classList.add('is-hidden');
     short_help_invalid.classList.add('is-hidden');
 
     // Validate input
     if (name.length === 0) {
-        short_help.classList.remove('is-hidden');
+        short_help_short.classList.remove('is-hidden');
         return false;
     }
     if (/^\w+$/.test(name) === false){
@@ -42,7 +49,7 @@ function new_project_save() {
 
     modal_ok.classList.add('is-loading');
     modal_cancel.classList.add('is-hidden');
-    fetch(window.location.protocol + "//" + window.location.host + '/dashboard/project/new',
+    fetch(window.location.protocol + "//" + window.location.host + '/api/project/new',
         {
             mode: "cors",
             headers: {
@@ -63,9 +70,10 @@ function new_project_save() {
             modal_cancel.classList.remove('is-hidden');
             if (result === "ok"){
                 hide_modal('modal-new-project');
+                window.location.reload(true);
             }
             if (result === "too-short"){
-                short_help.classList.remove('is-hidden');
+                short_help_short.classList.remove('is-hidden');
             }
             if (result === "invalid-name"){
                 short_help_invalid.classList.remove('is-hidden');
@@ -76,12 +84,19 @@ function new_project_save() {
         })
 }
 
+
+// ------------------------------------------------------
+// Hides any modal
+// ------------------------------------------------------
 function hide_modal(id_name)
 {
     let el = document.getElementById(id_name);
     el.classList.remove("is-active");
 }
 
+// ------------------------------------------------------
+// Shows any modal
+// ------------------------------------------------------
 function show_modal(id_name)
 {
     let el = document.getElementById(id_name);

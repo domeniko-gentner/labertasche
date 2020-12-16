@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 {% block main %}
     <div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
-        <h1 class="title has-text-white has-text-centered">Manage Comments</h1>
+        <h1 class="title has-text-white has-text-centered">{{ title }}</h1>
         <div class="field">
-            <form method="post" action="/dashboard/manage-comments/">
+            <form method="GET" action="/dashboard/{{ project }}/manage-{{action}}/">
                 <div class="control">
                     <div class="select">
-                        <select name="selected_location" onchange="this.form.submit();">
-                            <option value="-1">Select the article</option>
-                            {% for each in locations %}
-                                {% if selected is defined %}
-                                    {% if selected | string() == each.id_location | string() %}
-                                        <option selected="selected" value="{{ each.id_location }}">{{ each.location }}</option>
+                        <label for="location">
+                            <select name="location" onchange="this.form.submit();">
+                                <option value="-1">Select the article</option>
+                                {% for each in locations %}
+                                    {% if selected is defined %}
+                                        {% if selected | string() == each.id_location | string() %}
+                                            <option selected="selected" value="{{ each.id_location }}">{{ each.location }}</option>
+                                        {% else %}
+                                            <option value="{{ each.id_location }}">{{ each.location }}</option>
+                                        {% endif %}
                                     {% else %}
                                         <option value="{{ each.id_location }}">{{ each.location }}</option>
                                     {% endif %}
-                                {% else %}
-                                    <option value="{{ each.id_location }}">{{ each.location }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
+                                {% endfor %}
+                            </select>
+                        </label>
                     </div>
                 </div>
             </form>
@@ -48,22 +50,22 @@
                                 <nav class="level is-mobile">
                                     <a title="Delete this comment"
                                        class="level-item"
-                                       href="/dashboard/delete-comment/{{ selected }}/{{ comment.comments_id }}">
+                                       href="/api/comment-delete/{{ comment.comments_id }}?location={{ selected }}">
                                         <span class="icon is-medium"><i class="mdi mdi-24px mdi-trash-can"></i></span>
                                     </a>
                                     <a title="Delete comment and block mail address"
                                        class="level-item"
-                                       href="/dashboard/block-mail/{{ selected }}/{{ comment.comments_id }}">
+                                       href="/api/comment-block-mail/{{ comment.comments_id }}?location={{ selected }}">
                                         <span class="icon is-medium"><i class="mdi mdi-24px mdi-shield-lock"></i></span>
                                     </a>
                                     <a title="Publish this comment, don't allow mail"
                                        class="level-item"
-                                       href="/dashboard/allow-comment/{{ selected }}/{{ comment.comments_id }}">
+                                       href="/api/comment-allow/{{ comment.comments_id }}?location={{ selected }}">
                                         <span class="icon is-medium"><i class="mdi mdi-24px mdi-check"></i></span>
                                     </a>
                                     <a title="Allow email to bypass spam detection and allow comment"
                                        class="level-item"
-                                       href="/dashboard/allow-user/{{ selected }}/{{ comment.comments_id }}">
+                                       href="/api/comment-allow-user/{{ comment.comments_id }}?location={{ selected }}">
                                         <span class="icon is-medium"><i class="mdi mdi-24px mdi-check-all"></i></span>
                                     </a>
                                 </nav>

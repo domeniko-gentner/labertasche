@@ -201,4 +201,8 @@ def get_id_from_project_name(name: str) -> int:
     :return: the ID of the project
     """
     proj = db.session.query(TProjects).filter(TProjects.name == name).first()
+
+    if proj is None:
+        return -1
+
     return proj.id_project
