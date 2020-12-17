@@ -16,7 +16,7 @@ class TComments(db.Model):
     __table_args__ = {'useexisting': True}
 
     # primary key
-    comments_id = db.Column(db.Integer, primary_key=True)
+    comments_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # foreign keys
     location_id = db.Column(db.Integer, ForeignKey('t_location.id_location'), nullable=False)

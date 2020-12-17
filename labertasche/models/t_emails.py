@@ -16,7 +16,7 @@ class TEmail(db.Model):
     __table_args__ = {'useexisting': True}
 
     # primary key
-    id_email = db.Column(db.Integer, primary_key=True)
+    id_email = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # data
     email = db.Column(db.Integer, unique=True)

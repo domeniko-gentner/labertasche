@@ -15,7 +15,17 @@ class TProjects(db.Model):
     __table_args__ = {'useexisting': True}
 
     # primary key
-    id_project = db.Column(db.Integer, primary_key=True)
+    id_project = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # data
-    name = db.Column(db.Text, nullable=True, unique=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+    weburl = db.Column(db.Text, nullable=False)
+    blogurl = db.Column(db.Text, nullable=False)
+    output = db.Column(db.Text, nullable=False)
+    sendotp = db.Column(db.Boolean, nullable=False)
+
+    gravatar_cache = db.Column(db.Boolean, nullable=False)
+    gravatar_cache_dir = db.Column(db.Text, nullable=True)
+    gravatar_size = db.Column(db.Integer, nullable=True)
+
+    addon_smileys = db.Column(db.Boolean, nullable=False, default=True)
