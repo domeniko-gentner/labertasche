@@ -9,11 +9,13 @@
 from . import bp_dashboard
 from flask import render_template, request, redirect, url_for
 from flask_login import login_required
+from flask_cors import cross_origin
 from labertasche.database import labertasche_db as db
 from labertasche.models import TLocation, TComments
 from labertasche.helper import export_location, get_id_from_project_name
 
 
+@cross_origin()
 @bp_dashboard.route('<project>/manage-spam/', methods=["GET"])
 @login_required
 def dashboard_review_spam(project: str):

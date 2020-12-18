@@ -7,14 +7,16 @@
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
 from . import bp_jsconnector
-from flask import request, make_response, jsonify, redirect, url_for
+from flask import request, make_response, jsonify
 from flask_login import login_required
+from flask_cors import cross_origin
 from labertasche.database import labertasche_db as db
 from labertasche.helper import get_id_from_project_name
 from labertasche.models import TProjects, TComments, TEmail, TLocation
 import re
 
 
+@cross_origin()
 @bp_jsconnector.route("/project/new", methods=['POST'])
 @login_required
 def api_create_project():
@@ -38,6 +40,7 @@ def api_create_project():
     return make_response(jsonify(status='ok'), 200)
 
 
+@cross_origin()
 @bp_jsconnector.route('project/edit/<name>', methods=['POST'])
 @login_required
 def api_edit_project_name(name: str):
@@ -63,6 +66,7 @@ def api_edit_project_name(name: str):
     return make_response(jsonify(status='ok'), 200)
 
 
+@cross_origin()
 @bp_jsconnector.route('project/delete/<project>', methods=['GET'])
 @login_required
 def api_delete_project(project: str):
@@ -72,7 +76,6 @@ def api_delete_project(project: str):
     :param project: The name of the project
     :return: A string with an error code and 'ok' as string on success.
     """
-    # TODO: Javascript
     proj_id = get_id_from_project_name(project)
     if proj_id == -1:
         return make_response(jsonify(status='not-found'), 400)

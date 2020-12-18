@@ -9,12 +9,12 @@
 from . import bp_jsconnector
 from flask import request, redirect
 from flask_login import login_required
+from flask_cors import cross_origin
 from labertasche.database import labertasche_db as db
-from labertasche.helper import get_id_from_project_name, export_location
-from labertasche.models import TEmail, TComments
-from re import match
+from labertasche.models import TEmail
 
 
+@cross_origin()
 @bp_jsconnector.route('/mail-toggle-status/<int:id_email>')
 @login_required
 def api_toggle_email_reputation(id_email):
@@ -26,6 +26,7 @@ def api_toggle_email_reputation(id_email):
     return redirect(request.referrer)
 
 
+@cross_origin()
 @bp_jsconnector.route('/mail-reset-reputation/<int:id_email>')
 @login_required
 def api_reset_mail_reputation(id_email):

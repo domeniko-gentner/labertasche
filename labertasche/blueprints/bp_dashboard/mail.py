@@ -9,11 +9,13 @@
 from . import bp_dashboard
 from flask import render_template, redirect, url_for
 from flask_login import login_required
+from flask_cors import cross_origin
 from labertasche.database import labertasche_db as db
 from labertasche.models import TEmail
 from labertasche.helper import get_id_from_project_name
 
 
+@cross_origin()
 @bp_dashboard.route('<project>/manage-mail/')
 @login_required
 def dashboard_manage_mail(project: str):

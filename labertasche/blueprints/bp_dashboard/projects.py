@@ -10,6 +10,7 @@ from . import bp_dashboard
 from flask import render_template, redirect, url_for
 from flask_login import login_required
 from sqlalchemy import func
+from sqlalchemy.exc import OperationalError
 from labertasche.database import labertasche_db as db
 from labertasche.models import TComments, TProjects
 from labertasche.helper import get_id_from_project_name, dates_of_the_week
@@ -22,7 +23,12 @@ def dashboard_project_list():
     Displays an overview of all projects.
     :return: The overview template.
     """
-    t_projects = db.session.query(TProjects).all()
+    try:
+        t_projects = db.session.query(TProjects).all()
+    except OperationalError:
+        # Database not up-to-date
+        return redirect(url_for('bp_dbupgrades.upgrade_db_to_v2'))
+
     projects = list()
     for each in t_projects:
         comments = db.session.query(TComments).filter(TComments.project_id == each.id_project) \

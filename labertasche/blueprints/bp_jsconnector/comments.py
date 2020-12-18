@@ -9,6 +9,7 @@
 from . import bp_jsconnector
 from flask import request, redirect
 from flask_login import login_required
+from flask_cors import cross_origin
 from labertasche.database import labertasche_db as db
 from labertasche.helper import export_location
 from labertasche.models import TComments, TEmail
@@ -17,6 +18,7 @@ from labertasche.models import TComments, TEmail
 # They are called via GET
 
 
+@cross_origin()
 @bp_jsconnector.route('/comment-delete/<int:comment_id>', methods=['GET'])
 @login_required
 def api_comments_delete_comment(comment_id):
@@ -30,6 +32,7 @@ def api_comments_delete_comment(comment_id):
     return redirect(request.referrer)
 
 
+@cross_origin()
 @bp_jsconnector.route('/comment-allow/<int:comment_id>', methods=['GET'])
 @login_required
 def api_comment_allow_comment(comment_id):
@@ -46,6 +49,7 @@ def api_comment_allow_comment(comment_id):
     return redirect(request.referrer)
 
 
+@cross_origin()
 @bp_jsconnector.route('/comment-allow-user/<int:comment_id>', methods=["GET"])
 @login_required
 def api_comment_allow_user(comment_id):
@@ -79,6 +83,7 @@ def api_comment_allow_user(comment_id):
     return redirect(request.referrer)
 
 
+@cross_origin()
 @bp_jsconnector.route('/comment-block-mail/<int:comment_id>', methods=["GET"])
 @login_required
 def api_comment_block_mail(comment_id):

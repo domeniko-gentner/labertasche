@@ -84,6 +84,48 @@ function new_project_save() {
         })
 }
 
+function project_delete()
+{
+    let modal = document.getElementById('modal-project-delete');
+    let modal_ok = document.getElementById('modal-delete-ok');
+    let modal_cancel = document.getElementById('modal-delete-cancel');
+
+    const project = modal.dataset.project;
+    console.log("Project: " + project);
+    if (project === null || project.length === 0){
+        console.log("Couldn't find a valid dataset");
+        return;
+    }
+
+    modal_ok.classList.add('is-loading');
+    modal_cancel.classList.add('is-hidden');
+    fetch(window.location.protocol + "//" + window.location.host + '/api/project/delete/' + project,
+        {
+            mode: "cors",
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "GET"
+        })
+        .then(async function (response) {
+            let result = await response.json();
+            result = result['status'];
+            modal_ok.classList.remove('is-loading');
+            modal_cancel.classList.remove('is-hidden');
+            if (result === "ok") {
+                hide_modal('modal-project-delete');
+                window.location.reload(true);
+            }
+            console.log(result);
+        })
+        .catch(function (exc) {
+            console.log(exc);
+        })
+}
+
+
 
 // ------------------------------------------------------
 // Hides any modal
@@ -101,4 +143,14 @@ function show_modal(id_name)
 {
     let el = document.getElementById(id_name);
     el.classList.add("is-active");
+}
+
+// ------------------------------------------------------
+// Shows any modal
+// ------------------------------------------------------
+function show_modal_with_project(id_name, proj_name)
+{
+    let el = document.getElementById(id_name);
+    el.classList.add("is-active");
+    el.setAttribute('data-project', proj_name)
 }
