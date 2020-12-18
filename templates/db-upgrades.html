@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block main %}
+<div style="min-height: 80vh;" class="container bg-deepmatte p-6 brdr-yayellow is-size-5">
+    <h1 class="is-size-3 has-text-centered">{{  title }}</h1>
+
+    {% if not status %}
+    <p class="mt-5 has-text-justified">
+        The latest update has brought some changes to the database and your current db is incompatible.
+        This will upgrade the database to work with the recent update.
+        The wizard will create a backup, so don't worry! You will find the
+        backup in the labertasche root directory under <span class="code">/backup/v{{ prev_version }}.zip</span>.
+        <br>
+        <span class="has-text-weight-bold has-text-danger" >Please do not reload this page during the process!</span>
+    </p>
+    <div class="field mt-5">
+        <div class="control" id="controls">
+            <button id="start-button" onclick="start_upgrade_to_v2();" class="button is-success">START</button>
+        </div>
+    </div>
+    <div class="content" id="update-messages"></div>
+    {% else %}
+        <p class="mt-5 has-text-justified">
+        This update has already run. Please return to the
+            <a href="{{ url_for('bp_dashboard.dashboard_project_list') }}">dashboard</a>.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}
+{% block javascript_libs %}
+    <script src="/static/js/upgrade_to_v2.js"></script>
+{% endblock %}

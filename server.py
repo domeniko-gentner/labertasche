@@ -9,17 +9,15 @@
 import logging
 from flask import Flask, redirect, url_for
 from flask_cors import CORS
-from sqlalchemy import event
+from sqlalchemy import event, inspect
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
 from labertasche.settings import Settings
 from labertasche.database import labertasche_db
-from labertasche.blueprints import bp_comments, bp_login, bp_dashboard, bp_jsconnector
-from labertasche.models import TProjects
+from labertasche.blueprints import bp_comments, bp_login, bp_dashboard, bp_jsconnector, bp_dbupgrades
 from labertasche.helper import User
 from flask_login import LoginManager
-from flask_migrate import Migrate
-
+from datetime import timedelta
 
 # Load settings
 settings = Settings()
@@ -30,48 +28,48 @@ laberflask.config.update(dict(
     SESSION_COOKIE_DOMAIN=settings.system['cookie_domain'],
     SESSION_COOKIE_SECURE=settings.system['cookie_secure'],
     REMEMBER_COOKIE_SECURE=settings.system['cookie_secure'],
+    REMEMBER_COOKIE_DURATION=timedelta(days=7),
+    REMEMBER_COOKIE_HTTPONLY=True,
+    REMEMBER_COOKIE_REFRESH_EACH_REQUEST=True,
     DEBUG=settings.system['debug'],
     SECRET_KEY=settings.system['secret'],
-    TEMPLATES_AUTO_RELOAD=True,
+    TEMPLATES_AUTO_RELOAD=settings.system['debug'],
     SQLALCHEMY_DATABASE_URI=settings.system['database_uri'],
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 ))
 
-# Flask migrate
-migrate = Migrate(laberflask, labertasche_db, render_as_batch=True)
-
-# Initialize ORM
-labertasche_db.init_app(laberflask)
-with laberflask.app_context():
-    labertasche_db.create_all()
-    project = labertasche_db.session.query(TProjects).filter(TProjects.id_project == 1).first()
-    if not project:
-        default_project = {
-            "id_project": 1,
-            "name": "default"
-        }
-        labertasche_db.session.add(TProjects(**default_project))
-        labertasche_db.session.commit()
-
 # CORS
-CORS(laberflask, resources={r"/comments": {"origins": settings.system['blog_url']}})
+CORS(laberflask, resources={r"/comments": {"origins": settings.system['blog_url']},
+                            r"/api": {"origins": settings.system['web_url']},
+                            r"/dashboard": {"origins": settings.system['web_url']},
+                            })
 
 # Import blueprints
 laberflask.register_blueprint(bp_comments)
 laberflask.register_blueprint(bp_dashboard)
 laberflask.register_blueprint(bp_login)
 laberflask.register_blueprint(bp_jsconnector)
+laberflask.register_blueprint(bp_dbupgrades)
 
 # Disable Werkzeug's verbosity during development
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
-
 # Set up login manager
 loginmgr = LoginManager(laberflask)
 loginmgr.login_view = 'bp_admin_login.login'
 
+# Initialize ORM
+labertasche_db.init_app(laberflask)
+with laberflask.app_context():
+    table_names = inspect(labertasche_db.get_engine()).get_table_names()
+    is_empty = table_names == []
+    # Only create tables if the db is empty, so we can a controlled upgrade.
+    if is_empty:
+        labertasche_db.create_all()
 
+
+# There is only one user
 @loginmgr.user_loader
 def user_loader(user_id):
     if user_id != "0":
@@ -79,11 +77,13 @@ def user_loader(user_id):
     return User(user_id)
 
 
+# User not authorized
 @loginmgr.unauthorized_handler
 def login_invalid():
     return redirect(url_for('bp_login.show_login'))
 
 
+# Enable write-ahead-log for sqlite databases
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     if settings.system["database_uri"][0:6] == 'sqlite':

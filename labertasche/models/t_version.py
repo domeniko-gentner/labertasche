@@ -6,8 +6,16 @@
 #  * _repo    : https://git.tuxstash.de/gothseidank/labertasche
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
-from .t_comments import TComments
-from .t_location import TLocation
-from .t_emails import TEmail
-from .t_projects import TProjects
-from .t_version import TVersion
+from labertasche.database import labertasche_db as db
+
+
+class TVersion(db.Model):
+    # table name
+    __tablename__ = "t_version"
+    __table_args__ = {'useexisting': True}
+
+    # primary key
+    id_version = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    # data
+    version = db.Column(db.Integer)

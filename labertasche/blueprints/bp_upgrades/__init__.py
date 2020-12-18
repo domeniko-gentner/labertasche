@@ -6,8 +6,9 @@
 #  * _repo    : https://git.tuxstash.de/gothseidank/labertasche
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
-from .t_comments import TComments
-from .t_location import TLocation
-from .t_emails import TEmail
-from .t_projects import TProjects
-from .t_version import TVersion
+from flask import Blueprint
+
+# Blueprint
+bp_dbupgrades = Blueprint("bp_dbupgrades", __name__, url_prefix='/upgrade')
+
+from .db_v2 import upgrade_db_to_v2

@@ -12,22 +12,9 @@ system:
   database_uri: "sqlite:///db/labertasche.db"                           # Database URI. See documentation. Default is sqlite.
   secret: "6Gxvb52bIJCm2vfDsmWKzShKp1omrzVG"                            # CHANGE ME! THIS IS IMPORTANT!
   output: "./__implementation_example/data/"                            # Base path for the output json
-  debug: false                                                          # Leave this as is, this is for development.
+  debug: true                                                           # Leave this as is, this is for development.
   send_otp_to_publish: true                                             # Disables confirmation w/ OTP via mail
   cookie_secure: false
-
-projects:
-  - default:
-      web_url: "http://dev.localhost:1314/"
-      blog_url: "http://dev.localhost:1313/"
-      output: "./__implementation_example/data/"
-      send_otp_to_publish: true
-
-  - example.com:
-      web_url: "http://comments.example.com/"
-      blog_url: "http://blog.example.com/"
-      output: "./example/data/"
-      send_otp_to_publish: true
 
 gravatar:
   cache: true                                                           # Enable caching of gravatar images

@@ -80,7 +80,7 @@
                         <div class="card-footer-item has-background-danger-dark">
                             <a class="has-text-weight-bold has-text-white is-uppercase"
                                data-tippy-content="Delete the project and all of its content"
-                               href="{{ url_for('bp_jsconnector.api_delete_project', project=each['name']) }}">DELETE</a>
+                               onclick="show_modal_with_project('modal-project-delete', '{{ each['name'] }}');">DELETE</a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
@@ -108,7 +108,7 @@
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">New Project</p>
-                <button class="delete" aria-label="close"></button>
+                <button onclick="hide_modal('modal-new-project')" class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
                 <label for="project-name" class="has-text-black">PROJECT NAME
@@ -133,7 +133,7 @@
         <div class="modal-card">
             <header class="modal-card-head has-background-danger">
                 <p class="modal-card-title has-text-white">ERROR</p>
-                <button class="delete" aria-label="close"></button>
+                <button onclick="hide_modal('modal-project-not-found')" class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body has-text-black">
                 The specified project was not found! Did you delete it? Try refreshing the page.<br>
@@ -151,10 +151,94 @@
             </footer>
         </div>
     </div>
+    <div class="modal" id="modal-project-delete">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head has-background-warning">
+                <p class="modal-card-title has-text-black">WARNING!</p>
+                <button onclick="hide_modal('modal-project-delete')" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body has-text-black">
+                You are about to delete a project. All associated data will be unrecoverably lost!
+                Please perform a manual sql dump if you would like to retain that data.
+            </section>
+            <footer class="modal-card-foot">
+                <button id="modal-delete-ok" onclick="project_delete()" class="button is-danger">
+                    OK
+                </button>
+                <button id="modal-delete-cancel" onclick="hide_modal('modal-project-delete')" class="button is-success">
+                    CANCEL
+                </button>
+            </footer>
+        </div>
+    </div>
+    <div class="modal is-active" id="modal-project-edit">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head has-background-warning">
+                <p class="modal-card-title has-text-black">Edit Project</p>
+                <button onclick="hide_modal('modal-project-edit')" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body has-text-black bg-deepmatte">
+                <form>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" id="edit-project-name" name="edit-project-name" type="text">
+                        </div>
+                        <label class="label help has-text-white"  for="edit-project-name">
+                            Project Name
+                        </label>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" id="edit-project-web-url" name="edit-project-web-url" type="text">
+                        </div>
+                        <label class="label help has-text-white" for="edit-project-web-url">
+                            URI of the comment system
+                        </label>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" id="edit-project-blog-url" name="edit-project-blog-url" type="text">
+                        </div>
+                        <label class="label help has-text-white" for="edit-project-blog-url">
+                            URL of your Hugo site for this project
+                        </label>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" id="edit-project-output" name="edit-project-output" type="text">
+                        </div>
+                        <label class="label help has-text-white" for="edit-project-output">Output Directory</label>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <label class="checkbox help has-text-white" for="edit-project-send-otp">
+                                <input id="edit-project-send-otp" class="checkbox" type="checkbox"
+                                       name="edit-project-send-otp" checked>
+                                Send OTP to publish?
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <footer class="modal-card-foot bg-deepmatte">
+                <button id="modal-delete-ok" onclick="project_delete()" class="button is-danger">
+                    OK
+                </button>
+                <button id="modal-delete-cancel" onclick="hide_modal('modal-project-edit')" class="button is-success">
+                    CANCEL
+                </button>
+            </footer>
+        </div>
+    </div>
 {% endblock %}
 {% block javascript %}
     tippy('[data-tippy-content]', {
         allowHTML: true,
         delay: 500
     });
+
+    weburl = document.getElementById('edit-project-web-url')
+    weburl.value = window.location.host;
 {% endblock %}

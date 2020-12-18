@@ -10,3 +10,4 @@ from .bp_comments import bp_comments
 from .bp_login import bp_login
 from .bp_dashboard import bp_dashboard
 from .bp_jsconnector import bp_jsconnector
+from .bp_upgrades import bp_dbupgrades

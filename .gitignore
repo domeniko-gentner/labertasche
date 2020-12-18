@@ -7,3 +7,4 @@ db/*.db-wal
 output
 /output/
 *.old
+/backup/
