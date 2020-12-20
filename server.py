@@ -64,7 +64,7 @@ labertasche_db.init_app(laberflask)
 with laberflask.app_context():
     table_names = inspect(labertasche_db.get_engine()).get_table_names()
     is_empty = table_names == []
-    # Only create tables if the db is empty, so we can a controlled upgrade.
+    # Only create tables if the db is empty, so we can do a controlled upgrade.
     if is_empty:
         labertasche_db.create_all()
 
@@ -84,6 +84,7 @@ def login_invalid():
 
 
 # Enable write-ahead-log for sqlite databases
+# noinspection PyUnusedLocal
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     if settings.system["database_uri"][0:6] == 'sqlite':
