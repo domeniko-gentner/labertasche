@@ -72,7 +72,7 @@ The config looks like this:
 
 Other options:
 
-* [gunicorn](https://gunicorn.org/https://gunicorn.org/) + Apache/Nginx with Proxy Pass
+* [gunicorn](https://gunicorn.org/) + Apache/Nginx with Proxy Pass
 
 Once you can see the administrative page, you can start integrating it into Hugo.
 
