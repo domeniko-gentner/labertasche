@@ -19,7 +19,6 @@ class TProjects(db.Model):
 
     # data
     name = db.Column(db.Text, nullable=False, unique=True)
-    weburl = db.Column(db.Text, nullable=False)
     blogurl = db.Column(db.Text, nullable=False)
     output = db.Column(db.Text, nullable=False)
     sendotp = db.Column(db.Boolean, nullable=False)

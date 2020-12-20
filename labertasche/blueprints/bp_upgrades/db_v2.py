@@ -188,7 +188,6 @@ def upgrade_db_to_v2_import():
     default_project = {
         "id_project": 1,
         "name": "default",
-        "weburl": settings.system['web_url'],
         "blogurl": settings.system['blog_url'],
         "output": settings.system['output'],
         "sendotp": settings.system['send_otp_to_publish'],
