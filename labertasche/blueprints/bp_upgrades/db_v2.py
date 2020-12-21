@@ -13,7 +13,7 @@ from flask import render_template, jsonify, make_response
 from pathlib import Path
 from labertasche.database import labertasche_db as db
 from labertasche.models import TProjects, TComments, TLocation, TEmail, TVersion
-from labertasche.helper import Settings
+from labertasche.settings import LegacySettings
 from json import dump, load
 from shutil import copy, make_archive
 from re import search
@@ -128,7 +128,7 @@ def upgrade_db_to_v2_export():
 
     # Copy database
     try:
-        settings = Settings()
+        settings = LegacySettings(True)
         db_uri = settings.system['database_uri']
         if compare_digest(db_uri[0:6], "sqlite"):
             m = search("([/]{3})(.*)", db_uri)
@@ -163,7 +163,7 @@ def upgrade_db_to_v2_recreate():
 @login_required
 def upgrade_db_to_v2_import():
     path = get_backup_folder()
-    settings = Settings()
+    settings = LegacySettings(True)
 
     try:
         # load location

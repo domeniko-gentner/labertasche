@@ -15,6 +15,7 @@
 // post-internal-server-error
 // post-success
 // post-before-fetch
+// post-project-not-found
 function labertasche_callback(state)
 {
     if (state === "post-before-fetch"){

@@ -4,8 +4,11 @@ venv
 db/*.db
 db/*.db-shm
 db/*.db-wal
-output
-/output/
 *.old
+*.server
 /backup/
 labertasche.yaml
+/.secret
+/credentials.yaml
+*.bak
+smileys.yaml

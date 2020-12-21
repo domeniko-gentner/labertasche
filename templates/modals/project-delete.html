@@ -1,0 +1,21 @@
+<div class="modal" id="modal-project-delete">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-warning">
+            <p class="modal-card-title has-text-black">WARNING!</p>
+            <button onclick="hide_modal('modal-project-delete')" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body has-text-black">
+            You are about to delete a project. All associated data will be unrecoverably lost!
+            Please perform a manual sql dump if you would like to retain that data.
+        </section>
+        <footer class="modal-card-foot">
+            <button id="modal-delete-ok" onclick="project_delete()" class="button is-danger">
+                OK
+            </button>
+            <button id="modal-delete-cancel" onclick="hide_modal('modal-project-delete')" class="button is-success">
+                CANCEL
+            </button>
+        </footer>
+    </div>
+</div>

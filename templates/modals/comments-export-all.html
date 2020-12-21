@@ -1,0 +1,22 @@
+<div class="modal" id="modal-comments-export">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-warning">
+            <p class="modal-card-title has-text-black is-uppercase">Export all comments</p>
+            <button onclick="hide_modal('modal-comments-export')" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body has-text-white bg-deepmatte">
+            <p class="block">This will export all comments of this project to all locations.
+                Usually this is not needed, but can be helpful, if you have imported backups or similar.</p>
+            <p class="block has-text-danger">Do you wish to proceed?</p>
+        </section>
+        <footer class="modal-card-foot bg-deepmatte">
+            <button id="modal-ok" onclick="export_all_comments(this);" class="button is-success">
+                OK
+            </button>
+            <button id="modal-cancel" onclick="hide_modal('modal-comments-export')" class="button is-info">
+                CANCEL
+            </button>
+        </footer>
+    </div>
+</div>

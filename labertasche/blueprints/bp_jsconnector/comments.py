@@ -7,12 +7,12 @@
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
 from . import bp_jsconnector
-from flask import request, redirect
+from flask import request, redirect, make_response, jsonify
 from flask_login import login_required
 from flask_cors import cross_origin
 from labertasche.database import labertasche_db as db
-from labertasche.helper import export_location
-from labertasche.models import TComments, TEmail
+from labertasche.helper import export_location, get_id_from_project_name
+from labertasche.models import TComments, TEmail, TLocation
 
 # This file contains the routes for the manage comments menu point.
 # They are called via GET
@@ -112,3 +112,19 @@ def api_comment_block_mail(comment_id):
     return redirect(request.referrer)
 
 
+@cross_origin()
+@bp_jsconnector.route('/comment-export-all/<name>', methods=["GET"])
+@login_required
+def api_export_all_by_project(name):
+    proj_id = get_id_from_project_name(name)
+    if proj_id == -1:
+        return make_response(jsonify(status='not-found'), 400)
+
+    try:
+        locations = db.session.query(TLocation).all()
+        for each in locations:
+            export_location(each.id_location)
+    except Exception as e:
+        return make_response(jsonify(status='sql-error', msg=str(e)), 400)
+
+    return make_response(jsonify(status='ok'), 200)

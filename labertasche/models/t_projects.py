@@ -19,8 +19,8 @@ class TProjects(db.Model):
 
     # data
     name = db.Column(db.Text, nullable=False, unique=True)
-    blogurl = db.Column(db.Text, nullable=False)
-    output = db.Column(db.Text, nullable=False)
+    blogurl = db.Column(db.Text, nullable=False, unique=False)
+    output = db.Column(db.Text, nullable=False, unique=True)
     sendotp = db.Column(db.Boolean, nullable=False)
 
     gravatar_cache = db.Column(db.Boolean, nullable=False)

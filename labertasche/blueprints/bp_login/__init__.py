@@ -8,7 +8,9 @@
 #  *********************************************************************************/
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_cors import cross_origin
-from labertasche.helper import check_auth, User
+from labertasche.helper import User
+from labertasche.settings import Credentials
+from secrets import compare_digest
 from flask_login import login_user, current_user, logout_user
 
 # Blueprint
@@ -30,7 +32,9 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if check_auth(username, password):
+        credentials = Credentials()
+        if compare_digest(username.encode('utf8'), credentials.username.encode('utf8')) and \
+                credentials.compare_password(password):
             login_user(User(0), remember=True)
             return redirect(url_for('bp_dashboard.dashboard_project_list'))
 

@@ -1,0 +1,24 @@
+<div class="modal" id="modal-project-not-found">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-danger">
+            <p class="modal-card-title has-text-white">ERROR</p>
+            <button onclick="hide_modal('modal-project-not-found')" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body has-text-black">
+            The specified project was not found! Did you delete it? Try refreshing the page.<br>
+            If you believe this to be a bug, please report it
+            <a  class="has-text-info"
+                href="https://github.com/domeniko-gentner/labertasche/issues"
+                target="_blank" rel="nofollow noopener norefferer">
+                here
+            </a>.
+        </section>
+        <footer class="modal-card-foot">
+            <button id="modal-ok" onclick="hide_modal('modal-project-not-found', {{ url_for('bp_dashboard.dashboard_project_list') }})"
+                    class="button is-success">
+                OK
+            </button>
+        </footer>
+    </div>
+</div>

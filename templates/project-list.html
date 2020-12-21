@@ -36,10 +36,11 @@
                     </div>
                     <div class="card-footer">
                         <div class="card-footer-item">
+                            <!-- TODO: onclick -->
                             <a class="has-text-weight-bold has-text-black is-uppercase"
-                               onclick="show_modal('modal-new-project');"
-                               data-tippy-content="Create a new project"
-                               href="#">NEW</a>
+                               onclick="show_modal_with_project('modal-project-edit', null)"
+                               data-tippy-content="Create a new project" href="#"
+                               >NEW</a>
                         </div>
                     </div>
                 </div>
@@ -80,22 +81,24 @@
                         <div class="card-footer-item has-background-danger-dark">
                             <a class="has-text-weight-bold has-text-white is-uppercase"
                                data-tippy-content="Delete the project and all of its content"
-                               onclick="show_modal_with_project('modal-project-delete', '{{ each['name'] }}');">DELETE</a>
+                               onclick="show_modal('modal-project-delete', '{{ each['name'] }}');">DELETE</a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
+                               onclick="show_modal_with_project('modal-project-edit', '{{ each['name'] }}');"
                                data-tippy-content="Edit the name of the project and it's properties"
                                href="#">EDIT</a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
+                               onclick="show_modal('modal-comments-export', '{{ each['name'] }}')"
                                data-tippy-content="Export all comments to Hugo.<br>This is normally not needed."
                                href="#">EXPORT</a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
                                data-tippy-content="Manage this project"
-                               href="{{ url_for('bp_dashboard.dashboard_project_stats', project=each['name']) }}">VIEW</a>
+                               href="{{ url_for('bp_dashboard.dashboard_project_stats', project=each['name']) }}">manage</a>
                         </div>
                     </div>
                 </div>
@@ -103,142 +106,14 @@
         {% endfor %}
         </div>
     </div>
-    <div class="modal" id="modal-new-project">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">New Project</p>
-                <button onclick="hide_modal('modal-new-project')" class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <label for="project-name" class="has-text-black">PROJECT NAME
-                    <input class="input is-success"
-                           type="text"
-                           name="project-name"
-                           id="project-name"
-                           placeholder="Type a name without special characters.."
-                    >
-                </label>
-                <p id="new-project-too-short" class="is-hidden help has-text-danger">Input too short. Needs at least 1 character!</p>
-                <p id="new-project-invalid-name" class="is-hidden help has-text-danger">Input is invalid. Please use only a-z and 0-9.</p>
-            </section>
-            <footer class="modal-card-foot">
-                <button id="modal-ok" onclick="new_project_save()" class="button is-success">Save</button>
-                <button id="modal-cancel" onclick="hide_modal('modal-new-project')" class="button is-danger">Cancel</button>
-            </footer>
-        </div>
-    </div>
-    <div class="modal" id="modal-project-not-found">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head has-background-danger">
-                <p class="modal-card-title has-text-white">ERROR</p>
-                <button onclick="hide_modal('modal-project-not-found')" class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body has-text-black">
-                The specified project was not found! Did you delete it? Try refreshing the page.<br>
-                If you believe this to be a bug, please report it
-                <a  class="has-text-info"
-                    href="https://github.com/domeniko-gentner/labertasche/issues"
-                   target="_blank" rel="nofollow noopener norefferer">
-                    here
-                </a>.
-            </section>
-            <footer class="modal-card-foot">
-                <button id="modal-ok" onclick="hide_modal('modal-project-not-found')" class="button is-success">
-                    OK
-                </button>
-            </footer>
-        </div>
-    </div>
-    <div class="modal" id="modal-project-delete">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head has-background-warning">
-                <p class="modal-card-title has-text-black">WARNING!</p>
-                <button onclick="hide_modal('modal-project-delete')" class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body has-text-black">
-                You are about to delete a project. All associated data will be unrecoverably lost!
-                Please perform a manual sql dump if you would like to retain that data.
-            </section>
-            <footer class="modal-card-foot">
-                <button id="modal-delete-ok" onclick="project_delete()" class="button is-danger">
-                    OK
-                </button>
-                <button id="modal-delete-cancel" onclick="hide_modal('modal-project-delete')" class="button is-success">
-                    CANCEL
-                </button>
-            </footer>
-        </div>
-    </div>
-    <div class="modal is-active" id="modal-project-edit">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head has-background-warning">
-                <p class="modal-card-title has-text-black">Edit Project</p>
-                <button onclick="hide_modal('modal-project-edit')" class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body has-text-black bg-deepmatte">
-                <form>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input" id="edit-project-name" name="edit-project-name" type="text">
-                        </div>
-                        <label class="label help has-text-white"  for="edit-project-name">
-                            Project Name
-                        </label>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input" id="edit-project-web-url" name="edit-project-web-url" type="text">
-                        </div>
-                        <label class="label help has-text-white" for="edit-project-web-url">
-                            URI of the comment system
-                        </label>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input" id="edit-project-blog-url" name="edit-project-blog-url" type="text">
-                        </div>
-                        <label class="label help has-text-white" for="edit-project-blog-url">
-                            URL of your Hugo site for this project
-                        </label>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <input class="input" id="edit-project-output" name="edit-project-output" type="text">
-                        </div>
-                        <label class="label help has-text-white" for="edit-project-output">Output Directory</label>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <label class="checkbox help has-text-white" for="edit-project-send-otp">
-                                <input id="edit-project-send-otp" class="checkbox" type="checkbox"
-                                       name="edit-project-send-otp" checked>
-                                Send OTP to publish?
-                            </label>
-                        </div>
-                    </div>
-                </form>
-            </section>
-            <footer class="modal-card-foot bg-deepmatte">
-                <button id="modal-delete-ok" onclick="project_delete()" class="button is-danger">
-                    OK
-                </button>
-                <button id="modal-delete-cancel" onclick="hide_modal('modal-project-edit')" class="button is-success">
-                    CANCEL
-                </button>
-            </footer>
-        </div>
-    </div>
+    {% include "modals/project_not_found.html"  %}
+    {% include "modals/project-delete.html"     %}
+    {% include "modals/project_edit.html"       %}
+    {% include "modals/comments-export-all.html"%}
 {% endblock %}
 {% block javascript %}
     tippy('[data-tippy-content]', {
         allowHTML: true,
         delay: 500
     });
-
-    weburl = document.getElementById('edit-project-web-url')
-    weburl.value = window.location.host;
 {% endblock %}

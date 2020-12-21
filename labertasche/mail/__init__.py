@@ -13,10 +13,11 @@ from pathlib import Path
 from platform import system
 from smtplib import SMTP_SSL, SMTPHeloError, SMTPAuthenticationError, SMTPException
 from ssl import create_default_context
-from labertasche.settings import Settings
 from validate_email import validate_email_or_fail
 from secrets import token_urlsafe
-
+from labertasche.models import TProjects
+from labertasche.database import labertasche_db as db
+from labertasche.settings import Settings
 
 class mail:
 
@@ -61,24 +62,30 @@ class mail:
         except SMTPException as e:
             print(f"SMTPException: {e}")
 
-    def send_confirmation_link(self, email):
+    def send_confirmation_link(self, email: str, name: str) -> tuple:
         """
         Send confirmation link after entering a comment
         :param email: The address to send the mail to
+        :param name: The name of the project
         :return: A tuple with the confirmation token and the deletion token, in this order
         """
+        project = db.session.query(TProjects).filter(TProjects.name == name).first()
+        if not project:
+            return None, None
+
         settings = Settings()
+
         confirm_digest = token_urlsafe(48)
         delete_digest = token_urlsafe(48)
 
-        confirm_url = f"{settings.system['web_url']}/comments/confirm/{confirm_digest}"
-        delete_url = f"{settings.system['web_url']}/comments/delete/{delete_digest}"
+        confirm_url = f"{settings.weburl}/comments/confirm/{confirm_digest}"
+        delete_url = f"{settings.weburl}/comments/delete/{delete_digest}"
 
-        txt_what = f"Hey there. You have made a comment on {settings.system['blog_url']}. Please confirm it by " \
+        txt_what = f"Hey there. You have made a comment on {project.blogurl}. Please confirm it by " \
                    f"copying this link into your browser:\n{confirm_url}\nIf you want to delete your comment for,"\
                    f"whatever reason, please use this link:\n{delete_url}"
 
-        html_what = f"Hey there. You have made a comment on {settings.system['blog_url']}.<br>Please confirm it by " \
+        html_what = f"Hey there. You have made a comment on {project.blogurl}.<br>Please confirm it by " \
                     f"clicking on this <a href='{confirm_url}'>link</a>.<br>"\
                     f"In case you want to delete your comment later, please click <a href='{delete_url}'>here</a>."\
                     f"<br><br>If you think this is in error or someone made this comment in your name, please "\

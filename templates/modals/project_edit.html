@@ -1,0 +1,109 @@
+<div class="modal" id="modal-project-edit">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-warning">
+            <p id="modal-title" class="modal-card-title has-text-black">Edit Project</p>
+            <button onclick="hide_modal('modal-project-edit')" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body has-text-black bg-deepmatte">
+            <form>
+                <div class="field">
+                    <div class="control has-icons-left"
+                         data-tippy-content="Please select an unique name for your project.">
+                        <input class="input" id="edit-project-name"
+                               name="edit-project-name" type="text">
+                        <span class="icon is-small is-left">
+                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                        </span>
+                    </div>
+                    <label class="label help has-text-white"  for="edit-project-name">
+                        Project Name
+                    </label>
+                </div>
+                <div class="field">
+                    <div class="control has-icons-left"
+                         data-tippy-content="URL of your hugo site, e.g. https://example.com">
+                        <input class="input" id="edit-project-blog-url" name="edit-project-blog-url" type="text">
+                        <span class="icon is-small is-left">
+                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                        </span>
+                    </div>
+                    <label class="label help has-text-white" for="edit-project-blog-url">
+                        URL of your Hugo site for this project
+                    </label>
+                </div>
+                <div class="field">
+                    <div class="control has-icons-left"
+                         data-tippy-content="The path to the data directory of your Hugo installation.">
+                        <input class="input" id="edit-project-output" name="edit-project-output" type="text">
+                        <span class="icon is-small is-left">
+                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                        </span>
+                    </div>
+                    <label class="label help has-text-white" for="edit-project-output">Output Directory</label>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox help has-text-white" for="edit-project-gravatar-cache">
+                            <input id="edit-project-gravatar-cache" class="checkbox" type="checkbox"
+                                   name="edit-project-gravatar-cache" checked onclick="toggle_gravatar_settings(this);">
+                            Cache Gravatar images?
+                        </label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control has-icons-left"
+                         data-tippy-content="The directory where to save the gravatar images. Should be a full path.">
+                        <input class="input" id="edit-project-gravatar-cache-dir" name="edit-project-gravatar-cache-dir" type="text">
+                        <span class="icon is-small is-left">
+                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                        </span>
+                    </div>
+                    <label class="label help has-text-white" for="edit-project-gravatar-cache-dir">
+                        Gravatar Cache Directory
+                    </label>
+                </div>
+                <div class="field">
+                    <div class="control has-icons-left"
+                         data-tippy-content="The numeric size of the images to download. Must be a power of 2.">
+                        <input class="input" id="edit-project-gravatar-size" name="edit-project-gravatar-size" type="text" value="256">
+                        <span class="icon is-small is-left">
+                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                        </span>
+                    </div>
+                    <label class="label help has-text-white" for="edit-project-gravatar-size">
+                        Gravatar image size
+                    </label>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox help has-text-white" for="edit-project-send-otp">
+                            <input id="edit-project-send-otp" class="checkbox" type="checkbox"
+                                   name="edit-project-send-otp" checked>
+                            Send OTP to publish?
+                        </label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox help has-text-white" for="edit-project-addons-smileys">
+                            <input id="edit-project-addons-smileys" class="checkbox" type="checkbox"
+                                   name="edit-project-addons-smileys" checked>
+                            Enable Smiley Addon?
+                        </label>
+                    </div>
+                </div>
+                <div class="label has-text-danger" id="modal-edit-error-messages">
+                </div>
+            </form>
+        </section>
+        <footer class="modal-card-foot bg-deepmatte">
+            <button id="modal-save-ok" onclick="save_project_settings('modal-project-edit');" class="button is-success">
+                OK
+            </button>
+            <button onclick="hide_modal('modal-project-edit')" class="button is-info">
+                CANCEL
+            </button>
+        </footer>
+    </div>
+</div>

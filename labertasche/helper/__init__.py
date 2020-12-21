@@ -8,21 +8,19 @@
 #  *********************************************************************************/
 import datetime
 import json
-from labertasche.models import TLocation, TComments, TProjects
-from labertasche.settings import Settings
-from labertasche.database import labertasche_db as db
-from functools import wraps
 from hashlib import md5
-from flask import request
 from flask_login import UserMixin
-from secrets import compare_digest
 from pathlib import Path
 from sys import stderr
 from re import match as re_match
-import requests
+from labertasche.models import TLocation, TComments, TProjects
+from labertasche.database import labertasche_db as db
 
 
 class User(UserMixin):
+    """
+    Class for flask-login, which represents a user
+    """
     def __init__(self, user_id):
         self.id = user_id
 
@@ -37,7 +35,7 @@ def is_valid_json(j):
     try:
         json.dumps(j)
         return True
-    except json.JSONDecodeError as e:
+    except json.JSONDecodeError:
         print("not valid json")
         return False
 
@@ -77,58 +75,28 @@ def alchemy_query_to_dict(obj):
 
 # Come on, it's  a mail hash, don't complain
 # noinspection InsecureHash
-def check_gravatar(email: str):
+def check_gravatar(email: str, name: str):
     """
     Builds the gravatar email hash, which uses md5.
     You may use ?size=128 for example to dictate size in the final template.
     :param email: the email to use for the hash
+    :param name: The project name
     :return: the gravatar url of the image
     """
-    settings = Settings()
-    options = settings.gravatar
+    from requests import get
+    project = db.session.query(TProjects).filter(TProjects.name == name).first()
     gravatar_hash = md5(email.strip().lower().encode("utf8")).hexdigest()
-    if options['cache']:
-        url = f"https://www.gravatar.com/avatar/{gravatar_hash}?s={options['size']}"
-        response = requests.get(url)
+
+    if project.gravatar_cache:
+        url = f"https://www.gravatar.com/avatar/{gravatar_hash}?s={project.gravatar_size}"
+        response = get(url)
         if response.ok:
-            outfile = Path(f"{options['static_dir']}/{gravatar_hash}.jpg")
+            outfile = Path(f"{project.gravatar_cache_dir}/{gravatar_hash}.jpg")
             with outfile.open('wb') as fp:
                 response.raw.decode_content = True
                 for chunk in response:
                     fp.write(chunk)
-
     return gravatar_hash
-
-
-def check_auth(username: str, password: str):
-    """
-    Compares username and password from the settings file in a safe way.
-    Direct string comparison is vulnerable to timing attacks
-    https://sqreen.github.io/DevelopersSecurityBestPractices/timing-attack/python
-    :param username: username entered by the user
-    :param password: password entered by the user
-    :return: True if equal, False if not
-    """
-    settings = Settings()
-    if compare_digest(username, settings.dashboard['username']) and \
-            compare_digest(password, settings.dashboard['password']):
-        return True
-    return False
-
-
-def basic_login_required(f):
-    """
-    Decorator for basic auth
-    """
-    @wraps(f)
-    def wrapped_view(**kwargs):
-        auth = request.authorization
-        if not (auth and check_auth(auth.username, auth.password)):
-            return ('Unauthorized', 401, {
-                'WWW-Authenticate': 'Basic realm="Login Required"'
-            })
-        return f(**kwargs)
-    return wrapped_view
 
 
 def export_location(location_id: int) -> bool:
@@ -141,12 +109,28 @@ def export_location(location_id: int) -> bool:
         db.session.flush()
 
         # Query
-        loc_query = db.session.query(TLocation).filter(TLocation.id_location == location_id).first()
+        location = db.session.query(TLocation).filter(TLocation.id_location == location_id).first()
 
-        if loc_query:
+        if location:
             comments = db.session.query(TComments).filter(TComments.is_spam != True) \
                                                   .filter(TComments.is_published == True) \
-                                                  .filter(TComments.location_id == loc_query.id_location)
+                                                  .filter(TComments.location_id == location.id_location) \
+                                                  .filter(TProjects.id_project == location.project_id) \
+                                                  .all()
+            project = db.session.query(TProjects).filter(TProjects.id_project == location.project_id).first()
+
+            # Removes the last slash
+            path_loc = re_match(".*(?=/)", location.location)[0]
+
+            # Construct export path
+            jsonfile = Path(f"{project.output}/{path_loc}.json").absolute()
+            folder = jsonfile.parents[0]
+
+            # If there are no comments, do not export and remove empty file.
+            # The database is the point of trust.
+            if len(comments) == 0:
+                jsonfile.unlink(missing_ok=True)
+                return True
 
             bundle = {
                 "comments": [],
@@ -158,20 +142,14 @@ def export_location(location_id: int) -> bool:
                     continue
                 bundle['comments'].append(alchemy_query_to_dict(comment))
 
-            path_loc = re_match(".*(?=/)", loc_query.location)[0]
-
-            system = Settings().system
-            out = Path(f"{system['output']}/{path_loc}.json")
-            out = out.absolute()
-            folder = out.parents[0]
+            # Create folder if not exists and write file
             folder.mkdir(parents=True, exist_ok=True)
-            with out.open('w') as fp:
+            with jsonfile.open('w') as fp:
                 json.dump(bundle, fp)
 
             return True
 
     except Exception as e:
-        # mail(f"export_comments has thrown an error: {str(e)}")
         print(e, file=stderr)
         return False
 

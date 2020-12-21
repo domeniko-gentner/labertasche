@@ -15,8 +15,8 @@ from sqlalchemy import exc
 from labertasche.database import labertasche_db as db
 from labertasche.helper import is_valid_json, default_timestamp, check_gravatar, export_location
 from labertasche.mail import mail
-from labertasche.models import TComments, TLocation, TEmail
-from labertasche.settings import Settings
+from labertasche.models import TComments, TLocation, TEmail, TProjects
+from labertasche.settings import Smileys
 from secrets import compare_digest
 
 
@@ -25,19 +25,17 @@ bp_comments = Blueprint("bp_comments", __name__, url_prefix='/comments')
 
 
 # Route for adding new comments
-@bp_comments.route("/new", methods=['POST'])
+@bp_comments.route("/<name>/new", methods=['POST'])
 @cross_origin()
-def check_and_insert_new_comment():
+def check_and_insert_new_comment(name):
     if request.method == 'POST':
-        settings = Settings()
-        smileys = settings.smileys
-        addons = settings.addons
+        smileys = Smileys()
         sender = mail()
 
         # Check length of content and abort if too long or too short
         if request.content_length > 2048:
             return make_response(jsonify(status="post-max-length"), 400)
-        if request.content_length <= 0:
+        if request.content_length == 0:
             return make_response(jsonify(status="post-min-length"), 400)
 
         # get json from request
@@ -59,9 +57,14 @@ def check_and_insert_new_comment():
         content = re.sub(tags, '', new_comment['content']).strip()
         content = re.sub(special, '', content).strip()
 
-        # Convert smileys
-        if addons['smileys']:
-            for key, value in smileys.items():
+        # Get project
+        project = db.session.query(TProjects).filter(TProjects.name == name).first()
+        if not project:
+            return make_response(jsonify(status="post-project-not-found"), 400)
+
+        # Convert smileys if enabled
+        if project.addon_smileys:
+            for key, value in smileys.smileys.items():
                 content = content.replace(key, value)
 
         # Validate replied_to field is integer
@@ -119,7 +122,8 @@ def check_and_insert_new_comment():
         else:
             # Insert new location
             loc_table = {
-                'location': new_comment['location']
+                'location': new_comment['location'],
+                'project_id': project.id_project
             }
             new_loc = TLocation(**loc_table)
             db.session.add(new_loc)
@@ -133,11 +137,15 @@ def check_and_insert_new_comment():
         # insert comment
         # noinspection PyBroadException
         try:
-            new_comment.update({"is_published": False})
+            if project.sendotp:
+                new_comment.update({"is_published": False})
+            else:
+                new_comment.update({"is_published": True})
             new_comment.update({"created_on": default_timestamp()})
             new_comment.update({"is_spam": is_spam})
             new_comment.update({"spam_score": has_score})
-            new_comment.update({"gravatar": check_gravatar(new_comment['email'])})
+            new_comment.update({"gravatar": check_gravatar(new_comment['email'], project.name)})
+            new_comment.update({"project_id": project.id_project})
             t_comment = TComments(**new_comment)
             db.session.add(t_comment)
             db.session.commit()
@@ -145,10 +153,11 @@ def check_and_insert_new_comment():
             db.session.refresh(t_comment)
 
             # Send confirmation link and store returned value
-            hashes = sender.send_confirmation_link(new_comment['email'])
-            setattr(t_comment, "confirmation", hashes[0])
-            setattr(t_comment, "deletion", hashes[1])
-            db.session.commit()
+            if project.sendotp:
+                hashes = sender.send_confirmation_link(new_comment['email'], project.name)
+                setattr(t_comment, "confirmation", hashes[0])
+                setattr(t_comment, "deletion", hashes[1])
+                db.session.commit()
 
         except exc.IntegrityError as e:
             # Comment body exists, because content is unique
@@ -163,11 +172,12 @@ def check_and_insert_new_comment():
 
 
 # Route for confirming comments
-@bp_comments.route("/confirm/<email_hash>", methods=['GET'])
+@bp_comments.route("/confirm/<name>/<email_hash>", methods=['GET'])
 @cross_origin()
-def check_confirmation_link(email_hash):
-    settings = Settings()
+def check_confirmation_link(name, email_hash):
     comment = db.session.query(TComments).filter(TComments.confirmation == email_hash).first()
+    project = db.session.query(TProjects).filter(TProjects.name == name).first()
+
     if comment:
         location = db.session.query(TLocation).filter(TLocation.id_location == comment.location_id).first()
         if compare_digest(comment.confirmation, email_hash):
@@ -175,27 +185,27 @@ def check_confirmation_link(email_hash):
             if not comment.is_spam:
                 setattr(comment, "is_published", True)
             db.session.commit()
-            url = f"{settings.system['blog_url']}{location.location}#comment_{comment.comments_id}"
+            url = f"{project.blogurl}{location.location}#comment_{comment.comments_id}"
             export_location(location.id_location)
             return redirect(url)
 
-    return redirect(f"{settings.system['blog_url']}?cnf=true")
+    return redirect(f"{project.blogurl}?cnf=true")
 
 
 # Route for deleting comments
-@bp_comments.route("/delete/<email_hash>", methods=['GET'])
+@bp_comments.route("/delete/<name>/<email_hash>", methods=['GET'])
 @cross_origin()
-def check_deletion_link(email_hash):
-    settings = Settings()
-    query = db.session.query(TComments).filter(TComments.deletion == email_hash)
-    comment = query.first()
+def check_deletion_link(name, email_hash):
+    project = db.session.query(TProjects).filter(TProjects.name == name).first()
+    comment = db.session.query(TComments).filter(TComments.deletion == email_hash).first()
+
     if comment:
         location = db.session.query(TLocation).filter(TLocation.id_location == comment.location_id).first()
         if compare_digest(comment.deletion, email_hash):
-            query.delete()
+            comment.delete()
             db.session.commit()
-            url = f"{settings.system['blog_url']}?deleted=true"
+            url = f"{project.blogurl}?deleted=true"
             export_location(location.id_location)
             return redirect(url)
 
-    return redirect(f"{settings.system['blog_url']}?cnf=true")
+    return redirect(f"{project.blogurl}?cnf=true")
