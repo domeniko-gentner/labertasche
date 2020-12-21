@@ -2,7 +2,7 @@
 <!--suppress XmlDuplicatedId -->
 <h1 class="is-uppercase has-text-white">comments</h1>
 
-<div class="mb-5" id="labertasche-comment-section" data-remote="http://dev.localhost:1314/comments/new">
+<div class="mb-5" id="labertasche-comment-section" data-remote="http://dev.localhost:1314/comments/example/new">
     <div class="control is-expanded">
         <input onkeypress="labertasche_validate_mail();"
                onfocusout="labertasche_validate_mail();"
@@ -74,6 +74,7 @@
                         </span>
             </div>
             <div class="is-fullwidth bg-yayellow has-text-centered">
+                <!--suppress JSUnresolvedVariable -->
                 <a class="has-text-black" href="#labertasche-comment-section"
                    onclick="labertasche_reply_to({{.comment_id}}, labertasche_reply_callback);">
                     reply
