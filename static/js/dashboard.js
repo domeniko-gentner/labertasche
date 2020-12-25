@@ -5,20 +5,27 @@
 // #  * _license : This project is under MIT License
 // #  *********************************************************************************/
 
-async function get(partial, callback) {
-    await fetch(window.location.protocol + "//" + window.location.host + partial,
+async function get(partial, callback = null, accept_lang = null) {
+
+    let headers = {
+        'Access-Control-Allow-Origin': window.location.host,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+    }
+    if (accept_lang){
+        headers = Object.assign(headers, {'Accept-Language': accept_lang})
+    }
+
+    return await fetch(window.location.protocol + "//" + window.location.host + partial,
     {
             mode: "cors",
-            headers: {
-                'Access-Control-Allow-Origin': window.location.host,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
+            headers,
             method: "GET"
         })
         .then(async function (response) {
-            let result =  await response.json();
-            callback(result);
+            const result = await response.json();
+            if (callback){ callback(result); }
+            return result;
         })
         .catch(function (exc) {
             console.log(exc);
@@ -26,8 +33,8 @@ async function get(partial, callback) {
         })
 }
 
-async function post(partial, stringified_json, callback) {
-    await fetch(window.location.protocol + "//" + window.location.host + partial,
+async function post(partial, stringified_json, callback = null) {
+    return await fetch(window.location.protocol + "//" + window.location.host + partial,
     {
             mode: "cors",
             headers: {
@@ -39,11 +46,13 @@ async function post(partial, stringified_json, callback) {
             body: stringified_json
         })
         .then(async function (response) {
-            let result = await response.json();
-            callback(result);
+            const result = await response.json();
+            if (callback){ callback(result); }
+            return result;
         })
         .catch(function (exc) {
             console.log(exc);
+            return null;
         })
 }
 
@@ -59,7 +68,10 @@ function dashboard_mailsearch(search_txt)
         children[i].style.display = "none";
         let iTxt = children[i].innerText.replace(/(\r\n|\n|\r)/gm, "").trim();
 
-        if ( search_txt.value === iTxt.slice(0, search_txt.value.length)){
+        if (iTxt.includes(search_txt.value)){
+            children[i].style.display = "table-row";
+        }
+        if(search_txt.value === ''){
             children[i].style.display = "table-row";
         }
     }
@@ -129,6 +141,9 @@ async function show_modal_with_project(id_name, proj_name)
     // Get Dialog
     let modal = document.getElementById(id_name);
 
+    // Load i18n
+    let i18n = await get('/api/language', null, document.body.dataset.language);
+
     if (proj_name){
         // Get Data
         await get('/api/project/get/' + proj_name,
@@ -147,7 +162,7 @@ async function show_modal_with_project(id_name, proj_name)
         proj_el.value = proj_name
 
         // Set project name
-        title.innerText = "Edit project '" + proj_name + "'";
+        title.innerText =i18n['javascript_edit_project_modal_title'].replace('%name%', proj_name);
 
         // Make active
         modal.classList.add("is-active");
@@ -158,7 +173,7 @@ async function show_modal_with_project(id_name, proj_name)
     }
     if (proj_name == null){
         // Set project name
-        title.innerText = "New Project";
+        title.innerText = i18n['new_project'];
 
         // Reset fields, needed when user pressed cancel on edit modal
         document.getElementById('edit-project-name').value = "";
@@ -199,95 +214,31 @@ async function save_project_settings(id_name)
         "addon_smileys": document.getElementById('edit-project-addons-smileys').checked
     }
 
+    // Get field for errors and reset it
+    let error = document.getElementById('modal-edit-error-messages')
+    error.innerText = ''
+    let has_error = false;
+
     if (modal.dataset.mode === "edit"){
         let old_name = modal.dataset.name;
-
         await post('/api/project/edit/' +  old_name, JSON.stringify(json_data), function(result){
-            let error = document.getElementById('modal-edit-error-messages')
-            error.innerText = ''
-
-            if (result['status'] === 'too-short'){
-                error.innerText = "A required field has been left empty!"
-                return;
+            if (result['status'] !== 'ok') {
+                has_error = resolve_error_status(error, result);
             }
-            if (result['status'] === 'invalid-project-name') {
-                error.innerText = "The project name is not valid. Please only use alphanumeric characters!"
-                return;
-            }
-            if (result['status'] === 'project-exists') {
-                error.innerText = "A project with this name already exists!"
-                return;
-            }
-            if (result['status'] === 'invalid-blog-url') {
-                error.innerText = "The blog-url is invalid!"
-                return;
-            }
-            if (result['status'] === 'invalid-path-output') {
-                error.innerText = "This output path does not exist!"
-                return;
-            }
-            if (result['status'] === 'invalid-path-cache') {
-                error.innerText = "The cache path does not exist!"
-                return;
-            }
-            if (result['status'] === 'exception') {
-                error.innerText = "There was an unexpected exception. Please report this to contact@tuxstash.de:"
-                error.innerText += result['msg']
-                return;
-            }
-
-            // Reset button
-            btn.classList.remove('is-loading');
-            window.location.reload(true);
         })
     }
     if (modal.dataset.mode === 'new'){
         await post('/api/project/new', JSON.stringify(json_data), function(result){
-            let error = document.getElementById('modal-edit-error-messages')
-            error.innerText = '';
-
-            console.log(result['status']);
-            if (result['status'] === 'too-short'){
-                error.innerText = "A required field has been left empty!";
-                btn.classList.remove('is-loading');
-                return;
+            if (result['status'] !== 'ok') {
+                has_error = resolve_error_status(error, result);
             }
-            if (result['status'] === 'invalid-project-name') {
-                error.innerText = "The project name is not valid. Please only use alphanumeric characters!";
-                btn.classList.remove('is-loading');
-                return;
-            }
-            if (result['status'] === 'project-exists') {
-                error.innerText = "A project with this name already exists!";
-                btn.classList.remove('is-loading');
-                return;
-            }
-            if (result['status'] === 'invalid-blog-url') {
-                error.innerText = "The blog-url is invalid!";
-                btn.classList.remove('is-loading');
-                return;
-            }
-            if (result['status'] === 'invalid-path-output') {
-                error.innerText = "This output path does not exist!";
-                btn.classList.remove('is-loading');
-                return;
-            }
-            if (result['status'] === 'invalid-path-cache') {
-                error.innerText = "The cache path does not exist!";
-                btn.classList.remove('is-loading');
-                return;
-            }
-            if (result['status'] === 'exception') {
-                error.innerText = "There was an unexpected exception. Please report this to contact@tuxstash.de:";
-                error.innerText += result['msg'];
-                btn.classList.remove('is-loading');
-                return;
-            }
-
-            // Reset button
-            btn.classList.remove('is-loading');
-            window.location.reload(true);
         })
+    }
+
+    // Reset button
+    btn.classList.remove('is-loading');
+    if (has_error === false){
+        window.location.reload(true);
     }
 }
 
@@ -320,15 +271,57 @@ async function export_all_comments(btn)
 {
     btn.classList.add('is-loading');
     let proj_name = document.getElementById('modal-comments-export').dataset.name;
+    let result = await get('/api/comment-export-all/' + proj_name);
 
-    await get('/api/comment-export-all/' + proj_name, function(result){
-        if (result['status'] === 'ok'){
-            hide_modal('modal-comments-export');
-        }
-        if (result['status'] === 'not-found'){
-            // Redirect to error
-            hide_modal('modal-comments-export', '?error=404');
-        }
-        btn.classList.remove('is-loading');
-    })
+    if (result['status'] === 'ok'){
+        hide_modal('modal-comments-export');
+    }
+    if (result['status'] === 'not-found'){
+        // Redirect to error
+        hide_modal('modal-comments-export', '?error=404');
+    }
+
+    // Reset button
+    btn.classList.remove('is-loading');
+    console.log(result);
+}
+
+
+async function resolve_error_status(field, result)
+{
+    // Load i18n
+    let i18n = await get('/api/language', null, document.body.dataset.language);
+
+    let has_error = false;
+
+    if (result['status'] === 'too-short'){
+        field.innerText = i18n['javascript_required_field_empty'];
+        has_error = true;
+    }
+    if (result['status'] === 'invalid-project-name') {
+        field.innerText = i18n['javascript_invalid_project_name'];
+        has_error = true;
+    }
+    if (result['status'] === 'project-exists') {
+        field.innerText = i18n['javascript_project_duplicate'];
+        has_error = true;
+    }
+    if (result['status'] === 'invalid-blog-url') {
+        field.innerText = i18n['javascript_blogurl_invalid'];
+        has_error = true;
+    }
+    if (result['status'] === 'invalid-path-output') {
+        field.innerText = i18n['javascript_output_nonexistent'];
+        has_error = true;
+    }
+    if (result['status'] === 'invalid-path-cache') {
+        field.innerText = "The cache path does not exist!";
+        has_error = true;
+    }
+    if (result['status'] === 'exception') {
+        field.innerText = i18n['javascript_exception'];
+        field.innerText += "\n" + result['msg'];
+        has_error = true;
+    }
+    return has_error;
 }

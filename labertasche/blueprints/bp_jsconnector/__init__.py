@@ -13,5 +13,6 @@ bp_jsconnector = Blueprint("bp_jsconnector", __name__, url_prefix='/api/')
 
 from .projects import api_create_project, api_delete_project, api_edit_project_name
 from .mail import api_toggle_email_reputation, api_reset_mail_reputation
+from .language import api_translation
 from .comments import api_comment_allow_user, api_comment_allow_comment, \
                       api_comment_block_mail, api_comments_delete_comment

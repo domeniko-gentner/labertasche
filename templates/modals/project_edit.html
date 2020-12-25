@@ -2,94 +2,97 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head has-background-warning">
-            <p id="modal-title" class="modal-card-title has-text-black">Edit Project</p>
+            <p id="modal-title" class="modal-card-title has-text-black">{# filled by javascript #}</p>
             <button onclick="hide_modal('modal-project-edit')" class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body has-text-black bg-deepmatte">
             <form>
                 <div class="field">
                     <div class="control has-icons-left"
-                         data-tippy-content="Please select an unique name for your project.">
+                         data-tippy-content="{{ i18n['tooltip_project_name'] }}">
                         <input class="input" id="edit-project-name"
                                name="edit-project-name" type="text">
                         <span class="icon is-small is-left">
-                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                            <i class="mdi mdi-24px mdi-ab-testing"></i>
                         </span>
                     </div>
                     <label class="label help has-text-white"  for="edit-project-name">
-                        Project Name
+                       {{ i18n['project_name'] }}
                     </label>
                 </div>
                 <div class="field">
                     <div class="control has-icons-left"
-                         data-tippy-content="URL of your hugo site, e.g. https://example.com">
+                         data-tippy-content="{{ i18n['tooltip_hugo_url'] }}">
                         <input class="input" id="edit-project-blog-url" name="edit-project-blog-url" type="text">
                         <span class="icon is-small is-left">
-                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                            <i class="mdi mdi-24px mdi-web"></i>
                         </span>
                     </div>
                     <label class="label help has-text-white" for="edit-project-blog-url">
-                        URL of your Hugo site for this project
+                        {{ i18n['description_hugo_url'] }}
                     </label>
                 </div>
                 <div class="field">
                     <div class="control has-icons-left"
-                         data-tippy-content="The path to the data directory of your Hugo installation.">
+                         data-tippy-content="{{ i18n['tooltip_output_path'] }}">
                         <input class="input" id="edit-project-output" name="edit-project-output" type="text">
                         <span class="icon is-small is-left">
-                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                            <i class="mdi mdi-24px mdi-folder-outline"></i>
                         </span>
                     </div>
-                    <label class="label help has-text-white" for="edit-project-output">Output Directory</label>
+                    <label class="label help has-text-white" for="edit-project-output">{{ i18n['description_output_path'] }}</label>
                 </div>
                 <div class="field">
-                    <div class="control">
+                    <div class="control"
+                         data-tippy-content="{{ i18n['tooltip_gravatar_cache'] }}">
                         <label class="checkbox help has-text-white" for="edit-project-gravatar-cache">
                             <input id="edit-project-gravatar-cache" class="checkbox" type="checkbox"
                                    name="edit-project-gravatar-cache" checked onclick="toggle_gravatar_settings(this);">
-                            Cache Gravatar images?
+                            {{ i18n['description_gravatar_cache'] }}
                         </label>
                     </div>
                 </div>
                 <div class="field">
                     <div class="control has-icons-left"
-                         data-tippy-content="The directory where to save the gravatar images. Should be a full path.">
+                         data-tippy-content="{{ i18n['tooltip_gravatar_dir'] }}">
                         <input class="input" id="edit-project-gravatar-cache-dir" name="edit-project-gravatar-cache-dir" type="text">
                         <span class="icon is-small is-left">
-                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                            <i class="mdi mdi-24px mdi-folder-outline"></i>
                         </span>
                     </div>
                     <label class="label help has-text-white" for="edit-project-gravatar-cache-dir">
-                        Gravatar Cache Directory
+                        {{ i18n['description_gravatar_dir'] }}
                     </label>
                 </div>
                 <div class="field">
                     <div class="control has-icons-left"
-                         data-tippy-content="The numeric size of the images to download. Must be a power of 2.">
+                         data-tippy-content="{{ i18n['tooltip_gravatar_size'] }}">
                         <input class="input" id="edit-project-gravatar-size" name="edit-project-gravatar-size" type="text" value="256">
                         <span class="icon is-small is-left">
-                            <i class="mdi mdi-24px mdi-help-rhombus-outline"></i>
+                            <i class="mdi mdi-24px mdi-numeric-0-box"></i>
                         </span>
                     </div>
                     <label class="label help has-text-white" for="edit-project-gravatar-size">
-                        Gravatar image size
+                        {{ i18n['description_gravatar_size'] }}
                     </label>
                 </div>
                 <div class="field">
-                    <div class="control">
+                    <div class="control"
+                         data-tippy-content="{{ i18n['tooltip_send_otp'] }}">
                         <label class="checkbox help has-text-white" for="edit-project-send-otp">
                             <input id="edit-project-send-otp" class="checkbox" type="checkbox"
                                    name="edit-project-send-otp" checked>
-                            Send OTP to publish?
+                            {{ i18n['description_send_otp'] }}
                         </label>
                     </div>
                 </div>
                 <div class="field">
-                    <div class="control">
+                    <div class="control"
+                         data-tippy-content="{{ i18n['tooltip_enable_smileys'] }}">
                         <label class="checkbox help has-text-white" for="edit-project-addons-smileys">
                             <input id="edit-project-addons-smileys" class="checkbox" type="checkbox"
                                    name="edit-project-addons-smileys" checked>
-                            Enable Smiley Addon?
+                            {{ i18n['description_enable_smileys'] }}
                         </label>
                     </div>
                 </div>
@@ -98,11 +101,11 @@
             </form>
         </section>
         <footer class="modal-card-foot bg-deepmatte">
-            <button id="modal-save-ok" onclick="save_project_settings('modal-project-edit');" class="button is-success">
-                OK
+            <button id="modal-save-ok" onclick="save_project_settings('modal-project-edit');" class="button is-success is-capitalized">
+                {{ i18n['ok'] }}
             </button>
-            <button onclick="hide_modal('modal-project-edit')" class="button is-info">
-                CANCEL
+            <button onclick="hide_modal('modal-project-edit')" class="button is-info is-capitalized">
+                {{ i18n['cancel'] }}
             </button>
         </footer>
     </div>

@@ -2,19 +2,19 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head has-background-warning">
-            <p class="modal-card-title has-text-black">WARNING!</p>
+            <p class="modal-card-title has-text-black is-capitalized">{{ i18n['warning'] }}!</p>
             <button onclick="hide_modal('modal-project-delete')" class="delete" aria-label="close"></button>
         </header>
-        <section class="modal-card-body has-text-black">
-            You are about to delete a project. All associated data will be unrecoverably lost!
-            Please perform a manual sql dump if you would like to retain that data.
+        <section class="modal-card-body has-text-black bg-deepmatte">
+            <div class="block has-text-white">{{ i18n['delete_project_warning'] }}</div>
+            <div class="block has-text-danger">{{ i18n['wish_to_proceed'] }}</div>
         </section>
-        <footer class="modal-card-foot">
-            <button id="modal-delete-ok" onclick="project_delete()" class="button is-danger">
-                OK
+        <footer class="modal-card-foot bg-deepmatte has-text-white">
+            <button id="modal-delete-ok" onclick="project_delete()" class="button is-danger is-capitalized">
+                {{ i18n['ok'] }}
             </button>
-            <button id="modal-delete-cancel" onclick="hide_modal('modal-project-delete')" class="button is-success">
-                CANCEL
+            <button id="modal-delete-cancel" onclick="hide_modal('modal-project-delete')" class="button is-success is-capitalized">
+                {{ i18n['cancel'] }}
             </button>
         </footer>
     </div>

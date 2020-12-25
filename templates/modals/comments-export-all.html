@@ -2,20 +2,19 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head has-background-warning">
-            <p class="modal-card-title has-text-black is-uppercase">Export all comments</p>
+            <p class="modal-card-title has-text-black is-uppercase">{{ i18n['export_all_comments'] }}</p>
             <button onclick="hide_modal('modal-comments-export')" class="delete" aria-label="close"></button>
         </header>
-        <section class="modal-card-body has-text-white bg-deepmatte">
-            <p class="block">This will export all comments of this project to all locations.
-                Usually this is not needed, but can be helpful, if you have imported backups or similar.</p>
-            <p class="block has-text-danger">Do you wish to proceed?</p>
+        <section class="modal-card-body bg-deepmatte">
+            <div class="block has-text-white">{{ i18n['export_warning_text'] }}</div>
+            <div class="block has-text-danger">{{ i18n['wish_to_proceed'] }}</div>
         </section>
         <footer class="modal-card-foot bg-deepmatte">
-            <button id="modal-ok" onclick="export_all_comments(this);" class="button is-success">
-                OK
+            <button id="modal-ok" onclick="export_all_comments(this);" class="button is-warning is-capitalized">
+                {{ i18n['ok'] }}
             </button>
-            <button id="modal-cancel" onclick="hide_modal('modal-comments-export')" class="button is-info">
-                CANCEL
+            <button id="modal-cancel" onclick="hide_modal('modal-comments-export')" class="button is-success is-capitalized">
+                {{ i18n['cancel'] }}
             </button>
         </footer>
     </div>
