@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% block main %}
     <div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
-        <h1 class="title has-text-white has-text-centered">{{ title }}</h1>
+        {% if action == "spam" %}
+            <h1 class="title has-text-white has-text-centered">{{ i18n['manage_spam'] }}</h1>
+        {% else %}
+        <h1 class="title has-text-white has-text-centered">{{ i18n['manage_comments'] }}</h1>
+        {% endif %}
         <div class="field">
             <form method="GET" action="/dashboard/{{ project }}/manage-{{action}}/">
                 <div class="control">
                     <div class="select">
                         <label for="location">
                             <select name="location" onchange="this.form.submit();">
-                                <option value="-1">Select the article</option>
+                                <option value="-1">{{ i18n['select_article'] }}</option>
                                 {% for each in locations %}
                                     {% if selected is defined %}
                                         {% if selected | string() == each.id_location | string() %}
@@ -27,6 +31,13 @@
             </form>
         </div>
         <div>
+            {% if locations | length == 0 %}
+                {% if action == "spam" %}
+                    <div class="block">
+                        <p class="has-text-centered mt-5 is-size-2">{{ i18n['hooray_no_spam'] }}</p>
+                    </div>
+                {% endif %}
+            {% endif %}
             {% if spam_comments is defined %}
                 {% for comment in spam_comments %}
                     <article>
@@ -38,35 +49,43 @@
                             </figure>
                             <div class="media-content">
                                 <div class="content mr-5 mt-2">
-                                    <a title="comment ID" id="comment_{{comment.comments_id}}" href="#comment_{{comment.comments_id}}">#{{comment.comments_id}}</a>
-                                    Posted by <span class="fg-yellow">{{comment.email}}</span>
-                                    on <small class="fg-yellow">{{comment.created_on}}</small>
-                                    spam score: <span title="The higher this is, the less likely it is spam" class="fg-yellow">{{  comment.spam_score }}</span>
+                                    <a data-tippy-content="comment ID"
+                                       id="comment_{{comment.comments_id}}"
+                                       href="#comment_{{comment.comments_id}}">
+                                        #{{comment.comments_id}}
+                                    </a>
+                                    &nbsp;<span class="fg-yellow">{{comment.email}}</span>
+                                    &nbsp;<span class="fg-yellow">{{comment.created_on}}</span>
+                                    &nbsp;{{ i18n['spam_score'] }}:&nbsp;
+                                    <span data-tippy-content="{{ i18n['tooltip_spam_score'] }}"
+                                          class="fg-yellow">
+                                    {{  comment.spam_score | round(5) }}</span>
+                                    &nbsp;{{ i18n['published'] }}:&nbsp;<span class="fg-yellow">{{ comment.is_published }}</span>
                                     <br><br>
                                     <span class="mt-5">
                                     {{comment.content}}
                                 </span>
                                 </div>
                                 <nav class="level is-mobile">
-                                    <a title="Delete this comment"
+                                    <a data-tippy-content="{{ i18n['manage_comments_delete_comment'] }}"
                                        class="level-item"
                                        href="/api/comment-delete/{{ comment.comments_id }}?location={{ selected }}">
-                                        <span class="icon is-medium"><i class="mdi mdi-24px mdi-trash-can"></i></span>
+                                       <span class="icon is-medium"><i class="mdi mdi-24px mdi-trash-can"></i></span>
                                     </a>
-                                    <a title="Delete comment and block mail address"
+                                    <a data-tippy-content="{{ i18n['manage_comments_delete_and_block'] }}"
                                        class="level-item"
                                        href="/api/comment-block-mail/{{ comment.comments_id }}?location={{ selected }}">
-                                        <span class="icon is-medium"><i class="mdi mdi-24px mdi-shield-lock"></i></span>
+                                       <span class="icon is-medium"><i class="mdi mdi-24px mdi-close-box"></i></span>
                                     </a>
-                                    <a title="Publish this comment, don't allow mail"
+                                    <a data-tippy-content="{{ i18n['manage_comments_allow_comment'] }}"
                                        class="level-item"
                                        href="/api/comment-allow/{{ comment.comments_id }}?location={{ selected }}">
-                                        <span class="icon is-medium"><i class="mdi mdi-24px mdi-check"></i></span>
+                                       <span class="icon is-medium"><i class="mdi mdi-24px mdi-check"></i></span>
                                     </a>
-                                    <a title="Allow email to bypass spam detection and allow comment"
+                                    <a data-tippy-content="{{ i18n['manage_comments_allow_and_approve'] }}"
                                        class="level-item"
                                        href="/api/comment-allow-user/{{ comment.comments_id }}?location={{ selected }}">
-                                        <span class="icon is-medium"><i class="mdi mdi-24px mdi-check-all"></i></span>
+                                       <span class="icon is-medium"><i class="mdi mdi-24px mdi-check-all"></i></span>
                                     </a>
                                 </nav>
                             </div>

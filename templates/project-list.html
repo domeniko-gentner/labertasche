@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block main %}
     <div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
-    <h1 class="is-size-2 mb-3 is-uppercase">Select project</h1>
+    <h1 class="is-size-2 mb-3 is-uppercase">{{ i18n['select_project_to_manage']}}</h1>
         <div class="columns is-multiline">
             <div class="column is-4">
                 <div class="card my-shadow-subtle brdr-darkslate">
                     <div class="card-header">
                         <div class="card-header-title">
                             <p class="is-size-4 is-uppercase">
-                                NEW PROJECT
+                                {{ i18n['new_project']}}
                             </p>
                         </div>
                     </div>
@@ -16,19 +16,19 @@
                         <div class="level is-mobile">
                             <div class="level-item has-text-centered">
                                 <div>
-                                    <p class="heading is-capitalized">Comments</p>
+                                    <p class="heading is-capitalized">{{ i18n['comments']}}</p>
                                     <p class="is-size-4 has-text-weight-bold has-text-white">n/a</p>
                                 </div>
                             </div>
                             <div class="level-item has-text-centered">
                                 <div>
-                                    <p class="heading is-capitalized">Unpublished</p>
+                                    <p class="heading is-capitalized">{{ i18n['unpublished']}}</p>
                                     <p class="is-size-4 has-text-weight-bold has-text-white">n/a</p>
                                 </div>
                             </div>
                             <div class="level-item has-text-centered">
                                 <div class="ml-4">
-                                    <p class="heading is-capitalized">Spam</p>
+                                    <p class="heading is-capitalized">{{ i18n['spam']}}</p>
                                     <p class="is-size-4 has-text-weight-bold has-text-white">n/a</p>
                                 </div>
                             </div>
@@ -39,8 +39,8 @@
                             <!-- TODO: onclick -->
                             <a class="has-text-weight-bold has-text-black is-uppercase"
                                onclick="show_modal_with_project('modal-project-edit', null)"
-                               data-tippy-content="Create a new project" href="#"
-                               >NEW</a>
+                               data-tippy-content="{{ i18n['tooltip_create_new_project']  }}" href="#"
+                               >{{ i18n['new']}}</a>
                         </div>
                     </div>
                 </div>
@@ -59,19 +59,19 @@
                         <div class="level is-mobile">
                             <div class="level-item has-text-centered">
                                 <div>
-                                    <p class="heading is-capitalized">Comments</p>
+                                    <p class="heading is-capitalized">{{ i18n['comments']}}</p>
                                     <p class="is-size-4 has-text-weight-bold has-text-white">{{ each['total_comments'] }}</p>
                                 </div>
                             </div>
                             <div class="level-item has-text-centered">
                                 <div>
-                                    <p class="heading is-capitalized">Unpublished</p>
+                                    <p class="heading is-capitalized">{{ i18n['unpublished']}}</p>
                                     <p class="is-size-4 has-text-weight-bold has-text-white">{{ each['total_unpublished'] }}</p>
                                 </div>
                             </div>
                             <div class="level-item has-text-centered">
                                 <div class="ml-4">
-                                    <p class="heading is-capitalized">Spam</p>
+                                    <p class="heading is-capitalized">{{ i18n['spam']}}</p>
                                     <p class="is-size-4 has-text-weight-bold has-text-white">{{ each['total_spam'] }}</p>
                                 </div>
                             </div>
@@ -80,25 +80,34 @@
                     <div class="card-footer">
                         <div class="card-footer-item has-background-danger-dark">
                             <a class="has-text-weight-bold has-text-white is-uppercase"
-                               data-tippy-content="Delete the project and all of its content"
-                               onclick="show_modal('modal-project-delete', '{{ each['name'] }}');">DELETE</a>
+                               data-tippy-content="{{ i18n['tooltip_delete_project'] }}"
+                               onclick="show_modal('modal-project-delete', '{{ each['name'] }}');">
+{#                                {{ i18n['delete']}}#}
+                                <span class="icon"><span class="mdi mdi-24px mdi-delete"></span></span>
+                            </a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
                                onclick="show_modal_with_project('modal-project-edit', '{{ each['name'] }}');"
-                               data-tippy-content="Edit the name of the project and it's properties"
-                               href="#">EDIT</a>
+                               data-tippy-content="{{ i18n['tooltip_edit_project'] }}"
+                               href="#">
+                                <span class="icon"><span class="mdi mdi-24px mdi-database-edit"></span></span>
+                            </a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
                                onclick="show_modal('modal-comments-export', '{{ each['name'] }}')"
-                               data-tippy-content="Export all comments to Hugo.<br>This is normally not needed."
-                               href="#">EXPORT</a>
+                               data-tippy-content="{{ i18n['tooltip_export_all_comments'] }}"
+                               href="#">
+                                <span class="icon"><span class="mdi mdi-24px mdi-webhook"></span></span>
+                            </a>
                         </div>
                         <div class="card-footer-item">
                             <a class="has-text-weight-bold has-text-black is-uppercase"
-                               data-tippy-content="Manage this project"
-                               href="{{ url_for('bp_dashboard.dashboard_project_stats', project=each['name']) }}">manage</a>
+                               data-tippy-content="{{ i18n['tooltip_manage_this_project'] }}"
+                               href="{{ url_for('bp_dashboard.dashboard_project_stats', project=each['name']) }}">
+                                <span class="icon"><span class="mdi mdi-24px mdi-view-comfy"></span></span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -110,10 +119,4 @@
     {% include "modals/project-delete.html"     %}
     {% include "modals/project_edit.html"       %}
     {% include "modals/comments-export-all.html"%}
-{% endblock %}
-{% block javascript %}
-    tippy('[data-tippy-content]', {
-        allowHTML: true,
-        delay: 500
-    });
 {% endblock %}

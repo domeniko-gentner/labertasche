@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ i18n['html_language'] }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
@@ -8,33 +8,47 @@
     <link rel="stylesheet" href="/static/css/materialdesignicons.min.css" media="screen">
     <link rel="stylesheet" href="/static/css/Chart.min.css" media="screen">
 
-    <title>labertasche Dashboard</title>
+    <title>Labertasche&nbsp;{{ i18n['dashboard'] | capitalize }}</title>
 </head>
-<body class="is-family-sans-serif">
+<body class="is-family-sans-serif" data-language="{{ i18n['browser_language'] }}">
         <nav class="navbar" role="navigation" aria-label="main navigation">
             <a class="navbar-item is-size-4" href="/">
-                <span class="icon"><span class="mdi mdi-24px mdi-chart-bar"></span></span>
-                &nbsp;Labertasche Dashboard
+                <span class="icon"><span class="mdi mdi-24px mdi-home-group"></span></span>
+                <span class="is-capitalized">&nbsp;Labertasche&nbsp;{{ i18n['dashboard'] }}</span>
             </a>
-            <div class="navbar-start"></div>
+            <div class="navbar-start">
+            </div>
             <div class="navbar-end">
                 {% if project is defined %}
-                <a class="navbar-item" href="/dashboard/{{ project }}/manage-spam/">
-                    <span class="icon"><i class="mdi mdi-24px mdi-space-invaders"></i></span>
-                    &nbsp;MANAGE SPAM
-                </a>
-                <a class="navbar-item" href="/dashboard/{{ project }}/manage-comments/">
-                    <span class="icon"><i class="mdi mdi-24px mdi-comment"></i></span>
-                    &nbsp;MANAGE COMMENTS
-                </a>
-                <a class="navbar-item" href="/dashboard/{{ project }}/manage-mail">
-                    <span class="icon"><i class="mdi mdi-24px mdi-email"></i></span>
-                    &nbsp;MANAGE EMAIL ADDRESSES
-                </a>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link is-uppercase">
+                        <span class="icon"><i class="mdi mdi-24px mdi-comment-edit-outline"></i></span>
+                        <span class="is-uppercase">&nbsp;{{ project }}</span>
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="/dashboard/{{ project }}/">
+                            <span class="icon"><i class="mdi mdi-24px mdi-chart-box-outline"></i></span>
+                            <span class="is-uppercase">&nbsp;{{ i18n['statistics'] }}</span>
+                        </a>
+                        <a class="navbar-item" href="/dashboard/{{ project }}/manage-comments/">
+                            <span class="icon"><i class="mdi mdi-24px mdi-comment-check-outline"></i></span>
+                            <span class="is-uppercase">&nbsp;{{ i18n['comments'] }}</span>
+                        </a>
+                        <a class="navbar-item" href="/dashboard/{{ project }}/manage-spam/">
+                            <span class="icon"><i class="mdi mdi-24px mdi-comment-alert-outline"></i></span>
+                            <span class="is-uppercase">&nbsp;{{ i18n['spam'] }}</span>
+                        </a>
+                    </div>
+                </div>
                 {% endif %}
+                <a class="navbar-item" href="/dashboard/{{ project }}/manage-mail">
+                    <span class="icon"><i class="mdi mdi-24px mdi-email-outline"></i></span>
+                    <span class="is-uppercase">&nbsp;{{ i18n['manage_mail'] }}</span>
+                </a>
+                <!--suppress HtmlUnknownTarget -->
                 <a class="navbar-item" href="/logout/">
                     <span class="icon"><i class="mdi mdi-24px mdi-account-cancel"></i></span>
-                    &nbsp;LOGOUT
+                    <span class="is-uppercase">&nbsp;{{ i18n['logout'] }}</span>
                 </a>
             </div>
         </nav>
@@ -55,6 +69,11 @@
                 if (urlParams.get("error") === "404"){
                     show_modal('modal-project-not-found');
                 }
+
+                tippy('[data-tippy-content]', {
+                    allowHTML: true,
+                    delay: 500
+                });
                 {% block javascript %}
                 {% endblock %}
                 });

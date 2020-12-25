@@ -1,37 +1,91 @@
 {% extends "base.html" %}
 {% block main %}
 <div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
-    <h1 class="title has-text-white has-text-centered">Overview</h1>
+    <h1 class="title is-size-2 has-text-white has-text-centered is-uppercase">{{ i18n['statistics'] }}</h1>
     <div class="columns">
         <div class="column is-full">
-            <p class="is-size-4 mb-4 mt-4">Last 7 days</p>
-            <canvas id="chart-7d"></canvas>
+            <p class="is-size-4 mb-4 mt-4">{{ i18n['stats_total_percentage'] }}</p>
+            <canvas id="chart-total"
+                    data-spam="{{ total_spam }}"
+                    data-comments="{{ total_comments }}"
+                    data-unpublished="{{ total_unpublished }}">
+                Your Browser does not support a HTML5 canvas :(.
+            </canvas>
         </div>
     </div>
-
+    <div class="columns">
+        <div class="column is-full">
+            <p class="is-size-4 mb-4 mt-4">{{ i18n['stats_last_7_days'] }}</p>
+            <canvas id="chart-7d">Your Browser does not support a HTML5 canvas :(.</canvas>
+        </div>
+    </div>
 </div>
     <!--suppress JSValidateTypes -->
     <script>
     window.addEventListener('DOMContentLoaded', () => {
+        let chart_total = document.getElementById('chart-total');
+
+        let total_spam = parseInt(chart_total.dataset.spam);
+        let total_comments = parseInt(chart_total.dataset.comments);
+        let total_unpublished = parseInt(chart_total.dataset.unpublished);
+        let total = (total_spam + total_comments + total_unpublished);
+
+        let spam_perc = (total_spam/total) * 100;
+        let comm_perc = (total_comments/total) * 100;
+        let unpub_perc = (total_unpublished/total) * 100;
+
+        console.log(total);
+        console.log(spam_perc);
+        console.log(comm_perc);
+        console.log(unpub_perc);
+
+        new Chart(document.getElementById('chart-total'), {
+           type: "pie",
+           data: {
+               datasets: [{
+                   data: [spam_perc, comm_perc, unpub_perc],
+                   backgroundColor: [
+                       "rgba(182, 106, 254, 0.8)",
+                       "rgba(254, 218, 106, 0.8)",
+                       "rgba(108, 106, 254, 0.8)"
+                       ],
+                   }
+               ],
+               labels:[
+                   "{{ i18n['spam'] }}",
+                   "{{ i18n['stats_label_regular_comments'] }}",
+                   "{{ i18n['stats_label_unpublished_comments'] }}"
+               ]
+           },
+           options:{
+               responsive: true,
+               legend: {
+                   labels: {
+                       fontColor: 'white'
+                   }
+               }
+           }
+        });
+
         new Chart( document.getElementById('chart-7d'), {
                 type: "line",
                 data: {
                     labels:[{% for days in dates %}"{{ days }}"{% if not loop.last %},{% endif %}{% endfor %}],
                     datasets: [
                         {
-                            label: "spam",
+                            label: "{{ i18n['spam'] }}",
                             borderColor: "rgba(182, 106, 254, 1)",
                             backgroundColor: "rgba(182, 106, 254, 0.1)",
                             data: {{ spam }}
                         },
                         {
-                            label: "published comments",
+                            label: "{{ i18n['stats_label_regular_comments'] }}",
                             borderColor: "rgba(254, 218, 106, 1)",
                             backgroundColor: "rgba(254, 218, 106, 0.1)",
                             data: {{published}}
                         },
                         {
-                            label: "unpublished comments",
+                            label: "{{ i18n['stats_label_unpublished_comments'] }}",
                             borderColor: "rgba(108, 106, 254, 1)",
                             backgroundColor: "rgba(108, 106, 254, 0.1)",
                             data: {{ unpublished }}

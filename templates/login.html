@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ i18n.browser_language }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
@@ -7,29 +7,28 @@
     <link rel="stylesheet" href="/static/css/labertasche.css" media="screen">
     <link rel="stylesheet" href="/static/css/materialdesignicons.min.css" media="screen">
     <link rel="stylesheet" href="/static/css/Chart.min.css" media="screen">
-
-    <title>labertasche Dashboard</title>
+    <title>Labertasche {{ i18n['dashboard'] | capitalize }}</title>
 </head>
 <body>
 <section class="hero bg-yayellow is-fullheight">
     <div class="hero-head">
         <a target="_blank" href="https://github.com/domeniko-gentner/labertasche" rel="noopener nofollow noreferrer"
-           class="button is-info is-inverted is-medium">
+           class="button is-info is-inverted is-medium ml-1 mt-1 my-shadow-subtle">
                 <span class="icon mr-2">
                   <i class="mdi mdi-36px mdi-github"></i>
                 </span>
-            <span>Download</span>
+            <span>Github</span>
         </a>
     </div>
     <div class="hero-body has-text-black">
         <div class="container has-text-centered">
-            <p class="title">Labertasche Login</p>
+            <p class="title">Labertasche {{ i18n['login'] | capitalize }}</p>
             <!--suppress HtmlUnknownTarget -->
             <form method="POST" action="/login">
                 <div class="field">
                     <div class="control is-expanded has-icons-left">
                         <label for="username" class="help has-text-left has-text-black">
-                            <input class="input" name="username" type="text" placeholder="username">
+                            <input class="input" name="username" type="text" placeholder="{{ i18n['username'] | capitalize }}">
                         </label>
                         <span class="icon is-small is-left">
                             <span class="mdi mdi-24px mdi-shield-account"></span>
@@ -39,7 +38,7 @@
                 <div class="field">
                     <div class="control is-expanded has-icons-left">
                         <label for="password">
-                            <input class="input" name="password" type="password" placeholder="password">
+                            <input class="input" name="password" type="password" placeholder="{{ i18n['password'] | capitalize }}">
                         </label>
                         <span class="icon is-small is-left">
                             <span class="mdi mdi-24px mdi-shield-key"></span>
@@ -52,6 +51,5 @@
     </div>
     <div class="hero-foot"></div>
 </section>
-
 </body>
 </html>

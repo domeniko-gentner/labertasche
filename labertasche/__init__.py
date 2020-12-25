@@ -13,7 +13,8 @@ from labertasche import (
     blueprints,
     helper,
     mail,
-    settings
+    settings,
+    language
 )
 
 _all_ = [
@@ -22,5 +23,6 @@ _all_ = [
     blueprints,
     helper,
     mail,
-    settings
+    settings,
+    language
 ]

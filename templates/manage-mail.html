@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block main %}
 <div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
-<h1 class="title has-text-white has-text-centered">Manage mail addresses</h1>
+<h1 class="title has-text-white has-text-centered">{{ i18n['manage_mail'] }}</h1>
 <div class="field">
     <div class="control has-icons-left">
         <input class="input"
                type="text"
                id="mail-search"
                oninput="dashboard_mailsearch(this);"
-               placeholder="Search mail..."
+               placeholder="{{ i18n['placeholder_search_mail'] }}..."
                aria-placeholder="type to search mail addresses">
+        <label for="mail-search"></label>
         <span class="icon is-small is-left">
             <span class="mdi mdi-24px mdi-account-search"></span>
         </span>
@@ -19,8 +20,8 @@
     <table class="table is-fullwidth">
         <thead>
             <tr>
-                <th class="has-text-centered">Address</th>
-                <th class="has-text-centered">Status</th>
+                <th class="has-text-centered is-uppercase">{{ i18n['address'] }}</th>
+                <th class="has-text-centered is-uppercase">{{ i18n['status'] }}</th>
                 <th class="has-text-centered"></th>
             </tr>
         </thead>
@@ -31,13 +32,13 @@
                 <td>
                     <p class="has-text-centered">
                         {% if each.is_blocked %}
-                            <a title="Email is currently blocked. Click to unblock."
+                            <a title="{{ i18n['tooltip_email_blocked'] }}"
                                class="has-text-black"
                                href="/api/mail-toggle-status/{{ each.id_email }}">
                                 <i class="mdi mdi-24px mdi-check"></i>
                             </a>
                         {% else %}
-                            <a title="Email is currently excempt from spam detection. Click to block."
+                            <a data-tippy-content="{{ i18n['tooltip_email_allowed'] }}"
                                class="has-text-danger"
                                href="/dashboard/toggle-mail-allowed/{{ each.id_email }}">
                                 <i class="mdi mdi-24px mdi-block-helper"></i>
@@ -47,7 +48,7 @@
                 </td>
                 <td>
                     <p class="has-text-centered">
-                        <a title="Delete entry, this resets the reputation"
+                        <a data-tippy-content="{{ i18n['tooltip_delete_email'] }}"
                            class="has-text-danger-dark"
                            href="/api/mail-reset-reputation/{{ each.id_email }}">
                             <i class="mdi mdi-24px mdi-trash-can"></i>

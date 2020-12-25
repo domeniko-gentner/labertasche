@@ -9,11 +9,12 @@
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
 from logging import getLogger, ERROR as LOGGING_ERROR
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, request
 from flask_cors import CORS
 from sqlalchemy import event, inspect
 from labertasche.settings import Settings, Secret
 from labertasche.database import labertasche_db
+from labertasche.language import Language
 from labertasche.blueprints import bp_comments, bp_login, bp_dashboard, bp_jsconnector, bp_dbupgrades
 from labertasche.helper import User
 from flask_login import LoginManager
@@ -36,14 +37,12 @@ laberflask.config.update(dict(
     SECRET_KEY=secret.key,
     TEMPLATES_AUTO_RELOAD=settings.debug,
     SQLALCHEMY_DATABASE_URI=settings.database_uri,
-    SQLALCHEMY_TRACK_MODIFICATIONS=False
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    JSON_AS_ASCII=False
 ))
 
 # Mark secret for deletion
 del secret
-
-# CORS
-cors = CORS(laberflask)
 
 # Import blueprints
 laberflask.register_blueprint(bp_comments)
@@ -70,6 +69,10 @@ with laberflask.app_context():
         labertasche_db.create_all()
 
 
+# CORS
+cors = CORS(laberflask)
+
+
 # There is only one user
 @loginmgr.user_loader
 def user_loader(user_id):
@@ -92,3 +95,10 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA journal_mode=WAL;")
         cursor.close()
+
+
+# Inject i18n dictionaries into all templates
+@laberflask.context_processor
+def inject_language():
+    lang = Language(request)
+    return {"i18n": lang.i18n}
