@@ -28,6 +28,20 @@ def dashboard_review_spam(project: str):
     proj_id = get_id_from_project_name(project)
     all_locations = db.session.query(TLocation).filter(TLocation.project_id == proj_id).all()
 
+    # Check if there is a comment, otherwise don't show on management page
+    # This can happen when the last comment was deleted, the location
+    # won't be removed.
+    tmp_list = list()
+    for each in all_locations:
+        comment_count = db.session.query(TComments.comments_id) \
+                                  .filter(TComments.location_id == each.id_location) \
+                                  .filter(TComments.is_spam == True) \
+                                  .count()
+        if comment_count > 0:
+            tmp_list.append(each)
+
+    all_locations = tmp_list
+
     # Project does not exist, error code is used by Javascript, not Flask
     if proj_id == -1:
         return redirect(url_for("bp_dashboard.dashboard_project_list", error=404))

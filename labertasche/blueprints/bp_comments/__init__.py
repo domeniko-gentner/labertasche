@@ -19,16 +19,25 @@ from labertasche.models import TComments, TLocation, TEmail, TProjects
 from labertasche.settings import Smileys
 from secrets import compare_digest
 
-
 # Blueprint
 bp_comments = Blueprint("bp_comments", __name__, url_prefix='/comments')
 
 
 # Route for adding new comments
 @bp_comments.route("/<name>/new", methods=['POST'])
-@cross_origin()
 def check_and_insert_new_comment(name):
-    if request.method == 'POST':
+
+    # Get project
+    project = db.session.query(TProjects).filter(TProjects.name == name).first()
+
+    # Check refferer, this is not bullet proof
+    if not compare_digest(request.origin, project.blogurl):
+        return make_response(jsonify(status="not-allowed"), 403)
+
+    if not project:
+        return make_response(jsonify(status="post-project-not-found"), 400)
+
+    if compare_digest(request.method, "POST"):
         smileys = Smileys()
         sender = mail()
 
@@ -56,11 +65,6 @@ def check_and_insert_new_comment(name):
         special = re.compile('[&].*[;]')
         content = re.sub(tags, '', new_comment['content']).strip()
         content = re.sub(special, '', content).strip()
-
-        # Get project
-        project = db.session.query(TProjects).filter(TProjects.name == name).first()
-        if not project:
-            return make_response(jsonify(status="post-project-not-found"), 400)
 
         # Convert smileys if enabled
         if project.addon_smileys:
@@ -168,11 +172,13 @@ def check_and_insert_new_comment(name):
             return make_response(jsonify(status="post-internal-server-error"), 400)
 
         export_location(t_comment.location_id)
-        return make_response(jsonify(status="post-success", comment_id=t_comment.comments_id), 200)
+        return make_response(jsonify(status="post-success",
+                                     comment_id=t_comment.comments_id,
+                                     sendotp=project.sendotp), 200)
 
 
 # Route for confirming comments
-@bp_comments.route("/confirm/<name>/<email_hash>", methods=['GET'])
+@bp_comments.route("/<name>/confirm/<email_hash>", methods=['GET'])
 @cross_origin()
 def check_confirmation_link(name, email_hash):
     comment = db.session.query(TComments).filter(TComments.confirmation == email_hash).first()
@@ -193,7 +199,7 @@ def check_confirmation_link(name, email_hash):
 
 
 # Route for deleting comments
-@bp_comments.route("/delete/<name>/<email_hash>", methods=['GET'])
+@bp_comments.route("<name>/delete/<email_hash>", methods=['GET'])
 @cross_origin()
 def check_deletion_link(name, email_hash):
     project = db.session.query(TProjects).filter(TProjects.name == name).first()
@@ -202,7 +208,8 @@ def check_deletion_link(name, email_hash):
     if comment:
         location = db.session.query(TLocation).filter(TLocation.id_location == comment.location_id).first()
         if compare_digest(comment.deletion, email_hash):
-            comment.delete()
+            print("True")
+            db.session.delete(comment)
             db.session.commit()
             url = f"{project.blogurl}?deleted=true"
             export_location(location.id_location)

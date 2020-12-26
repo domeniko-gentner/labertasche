@@ -15,17 +15,18 @@ from labertasche.helper import get_id_from_project_name
 from labertasche.models import TProjects, TComments, TEmail, TLocation
 from validators import url as validate_url
 from pathlib import Path
+from secrets import compare_digest
 import re
 
 
-def validate_project(project):
+def validate_project(project, is_edit=False):
     """
     Validates important bits of a project database entry
 
     :param project: The json from the request, containing the data for a project.
+    :param is_edit: If we are updating the database, we need to know, so we don't check for dupes on urls.
     :return: A response with the error or None if the project is valid.
     """
-
     # Validate length
     if not len(project['name']) and \
             not len(project['blogurl']) and \
@@ -34,16 +35,18 @@ def validate_project(project):
 
     # Validate project name
     if not re.match('^\\w+$', project['name']):
-        print(project['name'])
         return make_response(jsonify(status='invalid-project-name'), 400)
 
     # Check if project name already exists
     name_check = db.session.query(TProjects.name).filter(TProjects.name == project['name']).first()
-    if name_check:
+    if name_check and not is_edit:
         return make_response(jsonify(status='project-exists'), 400)
 
-    # Validate url
-    url_exists = db.session.query(TProjects.blogurl).filter(TProjects.blogurl == project['blogurl']).first()
+    # Validate existing only if we are not editing
+    url_exists = False
+    if not is_edit:
+        url_exists = db.session.query(TProjects.blogurl).filter(TProjects.blogurl == project['blogurl']).first()
+
     if not validate_url(project['blogurl']) or url_exists:
         return make_response(jsonify(status='invalid-blog-url'), 400)
 
@@ -78,7 +81,12 @@ def api_create_project():
         return response
 
     try:
-        db.session.add(TProjects(**request.json))
+        new_project = request.json
+        # Remove trailing slash
+        if compare_digest(new_project['blogurl'][-1], '/'):
+            new_project['blogurl'] = new_project['blogurl'][:-1]
+
+        db.session.add(TProjects(**new_project))
         db.session.commit()
     except Exception as e:
         print(str(e))
@@ -97,21 +105,26 @@ def api_edit_project_name(name: str):
     :param name: The previous name of the project to edit, must exist
     :return: A string with an error code and 'ok' as string on success.
     """
-    response = validate_project(request.json)
+    response = validate_project(request.json, is_edit=True)
     if response is not None:
         return response
 
     try:
         project = db.session.query(TProjects).filter(TProjects.name == name).first()
+
+        project_json = request.json
+        # Remove trailing slash to streamline it
+        if compare_digest(project_json['blogurl'][-1], '/'):
+            setattr(project, "blogurl", project_json['blogurl'][:-1].strip())
+
         setattr(project, "id_project", project.id_project)
-        setattr(project, "name", request.json['name'])
-        setattr(project, "blogurl", request.json['blogurl'].strip())
-        setattr(project, "output", request.json['output'].strip())
-        setattr(project, "sendotp", request.json['sendotp'])
-        setattr(project, "gravatar_cache", request.json['gravatar_cache'])
-        setattr(project, "gravatar_cache_dir", request.json['gravatar_cache_dir'])
-        setattr(project, "gravatar_size", request.json['gravatar_size'])
-        setattr(project, "addon_smileys", request.json['addon_smileys'])
+        setattr(project, "name", project_json['name'])
+        setattr(project, "output", project_json['output'].strip())
+        setattr(project, "sendotp", project_json['sendotp'])
+        setattr(project, "gravatar_cache", project_json['gravatar_cache'])
+        setattr(project, "gravatar_cache_dir", project_json['gravatar_cache_dir'])
+        setattr(project, "gravatar_size", project_json['gravatar_size'])
+        setattr(project, "addon_smileys", project_json['addon_smileys'])
         db.session.commit()
     except Exception as e:
         print(str(e))
@@ -138,7 +151,6 @@ def api_delete_project(name: str):
     try:
         db.session.query(TComments).filter(TComments.project_id == proj_id).delete()
         db.session.query(TLocation).filter(TLocation.project_id == proj_id).delete()
-        db.session.query(TEmail).filter(TEmail.project_id == proj_id).delete()
         db.session.query(TProjects).filter(TProjects.id_project == proj_id).delete()
         db.session.commit()
         db.session.flush()

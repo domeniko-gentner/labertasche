@@ -7,8 +7,9 @@
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
 from . import bp_dashboard
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request
 from flask_login import login_required
+from flask_cors import cross_origin
 from sqlalchemy import func
 from sqlalchemy.exc import OperationalError
 from labertasche.database import labertasche_db as db
@@ -16,6 +17,7 @@ from labertasche.models import TComments, TProjects
 from labertasche.helper import get_id_from_project_name, dates_of_the_week
 
 
+@cross_origin
 @bp_dashboard.route("/")
 @login_required
 def dashboard_project_list():
@@ -50,6 +52,7 @@ def dashboard_project_list():
     return render_template('project-list.html', projects=projects)
 
 
+@cross_origin
 @bp_dashboard.route('/<project>/')
 @login_required
 def dashboard_project_stats(project: str):
@@ -65,6 +68,17 @@ def dashboard_project_stats(project: str):
     if proj_id == -1:
         return redirect(url_for("bp_dashboard.dashboard_project_list", error=404))
 
+    # Total graphs
+    total_spam = db.session.query(TComments).filter(TComments.is_spam == True).count()
+
+    total_comments = db.session.query(TComments) \
+                               .filter(TComments.is_spam == False)\
+                               .filter(TComments.is_published == True).count()
+
+    total_unpublished = db.session.query(TComments).filter(TComments.is_spam == False)\
+        .filter(TComments.is_published == False).count()
+
+    # 7 day graph
     dates = dates_of_the_week()
     spam = list()
     published = list()
@@ -89,5 +103,7 @@ def dashboard_project_stats(project: str):
         unpublished.append(len(unpub_comments))
 
     return render_template('project-stats.html', dates=dates, spam=spam, project=project,
-                           published=published, unpublished=unpublished)
+                           published=published, unpublished=unpublished,
+                           total_spam=total_spam, total_comments=total_comments,
+                           total_unpublished=total_unpublished)
 

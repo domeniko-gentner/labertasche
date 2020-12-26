@@ -9,7 +9,7 @@
 from . import bp_dbupgrades
 from flask_cors import cross_origin
 from flask_login import login_required
-from flask import render_template, jsonify, make_response
+from flask import render_template, jsonify, make_response, redirect, url_for
 from pathlib import Path
 from labertasche.database import labertasche_db as db
 from labertasche.models import TProjects, TComments, TLocation, TEmail, TVersion
@@ -36,6 +36,8 @@ def upgrade_db_to_v2():
         version = db.session.query(TVersion).first()
         if version:
             status = True
+            return redirect(url_for('bp_dashboard.dashboard_project_list'))
+
     except Exception as e:
         print(e.__class__)
         pass

@@ -16,12 +16,28 @@ from labertasche.helper import export_location, get_id_from_project_name
 
 
 @cross_origin
-@bp_dashboard.route('<project>/manage-comments/', methods=["GET"])
+@bp_dashboard.route('/<project>/manage-comments/', methods=["GET"])
 @login_required
 def dashboard_manage_regular_comments(project: str):
     location_id = 0
     proj_id = get_id_from_project_name(project)
-    all_locations = db.session.query(TLocation).filter(TLocation.project_id == proj_id).all()
+    all_locations = db.session.query(TLocation)\
+        .filter(TLocation.project_id == proj_id)\
+        .all()
+
+    # Check if there is a comment, otherwise don't show on management page
+    # This can happen when the last comment was deleted, the location
+    # won't be removed.
+    tmp_list = list()
+    for each in all_locations:
+        comment_count = db.session.query(TComments.comments_id)\
+                                  .filter(TComments.location_id == each.id_location)\
+                                  .filter(TComments.is_spam == False) \
+                                  .count()
+        if comment_count > 0:
+            tmp_list.append(each)
+
+    all_locations = tmp_list
 
     # Project does not exist, error code is used by Javascript, not Flask
     if proj_id == -1:
@@ -46,7 +62,6 @@ def dashboard_manage_regular_comments(project: str):
     except ValueError:
         pass
 
-    export_location(location_id)
     return render_template("manage-comments.html", locations=all_locations,
                            selected=location_id, project=project, title="Manage Comments",
                            action="comments")

@@ -7,7 +7,7 @@
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
 from labertasche.database import labertasche_db as db
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 
 
 class TLocation(db.Model):
@@ -19,5 +19,8 @@ class TLocation(db.Model):
     id_location = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # data
-    location = db.Column(db.Text, nullable=False, unique=True)
+    location = db.Column(db.Text, nullable=False)
     project_id = db.Column(db.Integer, ForeignKey('t_projects.id_project'), nullable=False)
+
+    # Unique constraint
+    UniqueConstraint('location', 'project_id', name="unique_per_project")

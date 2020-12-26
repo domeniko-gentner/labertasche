@@ -28,22 +28,12 @@
         let total_spam = parseInt(chart_total.dataset.spam);
         let total_comments = parseInt(chart_total.dataset.comments);
         let total_unpublished = parseInt(chart_total.dataset.unpublished);
-        let total = (total_spam + total_comments + total_unpublished);
-
-        let spam_perc = (total_spam/total) * 100;
-        let comm_perc = (total_comments/total) * 100;
-        let unpub_perc = (total_unpublished/total) * 100;
-
-        console.log(total);
-        console.log(spam_perc);
-        console.log(comm_perc);
-        console.log(unpub_perc);
 
         new Chart(document.getElementById('chart-total'), {
            type: "pie",
            data: {
                datasets: [{
-                   data: [spam_perc, comm_perc, unpub_perc],
+                   data: [total_spam, total_comments, total_unpublished],
                    backgroundColor: [
                        "rgba(182, 106, 254, 0.8)",
                        "rgba(254, 218, 106, 0.8)",

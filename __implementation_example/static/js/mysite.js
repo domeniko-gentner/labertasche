@@ -41,7 +41,7 @@ function labertasche_validate_mail()
     }
 }
 
-function labertasche_modal_hide()
+function labertasche_modal_hide(url=null)
 {
     let modal = document.getElementById('labertasche-modal');
     if (modal != null){
@@ -49,7 +49,12 @@ function labertasche_modal_hide()
             modal.classList.remove('is-active');
         }
     }
-    window.location.reload(true);
+    if (!modal.dataset.url) {
+        window.location.reload(true);
+    }
+    else{
+        window.location = modal.dataset.url;
+    }
 }
 
 function labertasche_comment_not_found()
@@ -57,6 +62,7 @@ function labertasche_comment_not_found()
     let modal = document.getElementById('labertasche-modal');
     let modal_text = document.getElementById('labertasche-modal-text');
     modal_text.innerText = "The link you followed was not valid. It either doesn't exist or was already used.";
+    modal.setAttribute('data-url', window.location.protocol + "//" + window.location.host)
     modal.classList.add('is-active');
 }
 
@@ -65,6 +71,7 @@ function labertasche_comment_deleted()
     let modal = document.getElementById('labertasche-modal');
     let modal_text = document.getElementById('labertasche-modal-text');
     modal_text.innerText = "Your comment has been deleted. Thank you for being here.";
+    modal.setAttribute('data-url', window.location.protocol + "//" + window.location.host)
     modal.classList.add('is-active');
 }
 

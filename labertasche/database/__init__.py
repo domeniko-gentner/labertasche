@@ -8,6 +8,7 @@
 #  *********************************************************************************/
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from sqlalchemy.pool import NullPool
 
 # naming conventions
 convention = {
@@ -20,4 +21,6 @@ convention = {
 metadata = MetaData(naming_convention=convention)
 
 # Create SQLAlchemy
-labertasche_db = SQLAlchemy(metadata=metadata)
+labertasche_db = SQLAlchemy(metadata=metadata, engine_options={
+    'poolclass': NullPool
+})

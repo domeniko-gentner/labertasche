@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% block main %}
     <div style="min-height: 100vh;" class="container bg-deepmatte p-6 brdr-yayellow">
-        {% if action == "spam" %}
-            <h1 class="title has-text-white has-text-centered">{{ i18n['manage_spam'] }}</h1>
-        {% else %}
-        <h1 class="title has-text-white has-text-centered">{{ i18n['manage_comments'] }}</h1>
-        {% endif %}
+        <h1 class="title has-text-white has-text-centered is-capitalized">
+            {% if action == "spam" %}
+                {{ i18n['manage_spam'] }}
+            {% else %}
+                    {{ i18n['manage_comments'] }}
+            {% endif %}
+        </h1>
         <div class="field">
             <form method="GET" action="/dashboard/{{ project }}/manage-{{action}}/">
                 <div class="control">

@@ -22,4 +22,3 @@ class TEmail(db.Model):
     email = db.Column(db.Integer, unique=True)
     is_blocked = db.Column(db.Boolean)
     is_allowed = db.Column(db.Boolean)
-    project_id = db.Column(db.Integer, ForeignKey('t_projects.id_project'), nullable=False)

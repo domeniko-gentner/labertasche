@@ -155,6 +155,18 @@ async function show_modal_with_project(id_name, proj_name)
             document.getElementById('edit-project-gravatar-size').value = r['gravatar_size'];
             document.getElementById('edit-project-send-otp').checked = r['sendotp'];
             document.getElementById('edit-project-addons-smileys').checked = r['addon_smileys'];
+
+            let cache = document.getElementById('edit-project-gravatar-cache-dir');
+            let size = document.getElementById('edit-project-gravatar-size');
+
+            if(!r['gravatar_cache']){
+                cache.setAttribute('disabled', '');
+                size.setAttribute('disabled', '');
+                cache.placeholder = "disabled";
+                cache.value = "";
+                size.placeholder = "disabled";
+                size.value = "";
+            }
         });
 
         // Set project name
@@ -253,8 +265,10 @@ function toggle_gravatar_settings(chkbx)
     if(!chkbx.checked){
         cache.setAttribute('disabled', '');
         size.setAttribute('disabled', '');
-        cache.value = "disabled";
-        size.value = "disabled";
+        cache.placeholder = "disabled";
+        cache.value = "";
+        size.placeholder = "disabled";
+        size.value = "";
     }
     else{
         cache.removeAttribute('disabled');

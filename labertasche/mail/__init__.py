@@ -18,6 +18,8 @@ from secrets import token_urlsafe
 from labertasche.models import TProjects
 from labertasche.database import labertasche_db as db
 from labertasche.settings import Settings
+from flask import render_template
+
 
 class mail:
 
@@ -78,22 +80,19 @@ class mail:
         confirm_digest = token_urlsafe(48)
         delete_digest = token_urlsafe(48)
 
-        confirm_url = f"{settings.weburl}/comments/confirm/{confirm_digest}"
-        delete_url = f"{settings.weburl}/comments/delete/{delete_digest}"
+        confirm_url = f"{settings.weburl}/comments/{project.name}/confirm/{confirm_digest}"
+        delete_url = f"{settings.weburl}/comments/{project.name}/delete/{delete_digest}"
 
         txt_what = f"Hey there. You have made a comment on {project.blogurl}. Please confirm it by " \
-                   f"copying this link into your browser:\n{confirm_url}\nIf you want to delete your comment for,"\
-                   f"whatever reason, please use this link:\n{delete_url}"
+                   f"copying this link into your browser:\n{confirm_url}\n" \
+                   f"If you want to delete your comment for whatever reason, please use this link:\n{delete_url}"
 
-        html_what = f"Hey there. You have made a comment on {project.blogurl}.<br>Please confirm it by " \
-                    f"clicking on this <a href='{confirm_url}'>link</a>.<br>"\
-                    f"In case you want to delete your comment later, please click <a href='{delete_url}'>here</a>."\
-                    f"<br><br>If you think this is in error or someone made this comment in your name, please "\
-                    f"write me a <a href='mailto:contact@tuxstash.de'>mail</a> to discuss options such as " \
-                    f"blocking your mail from being used."
+        html_what = render_template("comment_confirmation.html",
+                                    blogurl=project.blogurl,
+                                    confirmation_url=confirm_url,
+                                    deletion_url=delete_url)
 
         self.send(txt_what, html_what, email)
-
         return confirm_digest, delete_digest
 
     def validate(self, addr):
