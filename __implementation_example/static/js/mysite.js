@@ -49,6 +49,7 @@ function labertasche_modal_hide()
             modal.classList.remove('is-active');
         }
     }
+    window.location.reload(true);
 }
 
 function labertasche_comment_not_found()
@@ -93,12 +94,22 @@ function labertasche_post_callback(state)
     }
     if (state === "post-success"){
         button.classList.remove("is-loading");
-        modal_text.innerText = "Your comment was entered, but you need to confirm it, before it becomes active. Please check your mail!"
+        if (state['sendotp']) {
+            modal_text.innerText = "Your comment was entered, but you need to confirm it, before it becomes active. Please check your mail!"
+        }
+        else{
+            modal_text.innerText = "Your comment was successfully entered."
+        }
         modal.classList.add('is-active');
     }
     if (state === "post-fetch-exception" || state === "post-internal-server-error"){
         button.classList.remove("is-loading");
         modal_text.innerText = "Your comment was not entered because there was an error, which was recorded and reported automatically.";
+        modal.classList.add('is-active');
+    }
+    if (state === "post-duplicate"){
+        button.classList.remove("is-loading");
+        modal_text.innerText = "This comment was already made.";
         modal.classList.add('is-active');
     }
     if (state === "post-invalid-email"){
