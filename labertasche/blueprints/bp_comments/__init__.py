@@ -14,7 +14,7 @@ from flask_cors import cross_origin
 from sqlalchemy import exc
 from labertasche.database import labertasche_db as db
 from labertasche.helper import is_valid_json, default_timestamp, check_gravatar, export_location
-from labertasche.mail import mail
+from labertasche.mail import Mail
 from labertasche.models import TComments, TLocation, TEmail, TProjects
 from labertasche.settings import Smileys
 from secrets import compare_digest
@@ -39,7 +39,7 @@ def check_and_insert_new_comment(name):
 
     if compare_digest(request.method, "POST"):
         smileys = Smileys()
-        sender = mail()
+        sender = Mail()
 
         # Check length of content and abort if too long or too short
         if request.content_length > 2048:

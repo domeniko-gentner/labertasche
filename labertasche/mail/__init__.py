@@ -18,10 +18,11 @@ from secrets import token_urlsafe
 from labertasche.models import TProjects
 from labertasche.database import labertasche_db as db
 from labertasche.settings import Settings
-from flask import render_template
+from labertasche.language import Language
+from flask import render_template, request
 
 
-class mail:
+class Mail:
 
     def __init__(self):
         path = Path("/etc/labertasche/mail_credentials.json")
@@ -76,6 +77,7 @@ class mail:
             return None, None
 
         settings = Settings()
+        language = Language(request)
 
         confirm_digest = token_urlsafe(48)
         delete_digest = token_urlsafe(48)
@@ -83,11 +85,20 @@ class mail:
         confirm_url = f"{settings.weburl}/comments/{project.name}/confirm/{confirm_digest}"
         delete_url = f"{settings.weburl}/comments/{project.name}/delete/{delete_digest}"
 
-        txt_what = f"Hey there. You have made a comment on {project.blogurl}. Please confirm it by " \
-                   f"copying this link into your browser:\n{confirm_url}\n" \
-                   f"If you want to delete your comment for whatever reason, please use this link:\n{delete_url}"
+        html_tpl = f"mail/comment_confirmation_{language.browser_language}.html"
+        txt_tpl = f"mail/comment_confirmation_{language.browser_language}_txt.html"
 
-        html_what = render_template("comment_confirmation.html",
+        if not Path(f"./templates/{html_tpl}").exists():
+            html_tpl = f"mail/comment_confirmation_en-US.html"
+        if not Path(f"./templates/{txt_tpl}").exists():
+            html_tpl = f"mail/comment_confirmation_en-US_txt.html"
+
+        txt_what = render_template(txt_tpl,
+                                   blogurl=project.blogurl,
+                                   confirmation_url=confirm_url,
+                                   deletion_url=delete_url).replace('<pre>', "").replace('</pre>', '')
+
+        html_what = render_template(html_tpl,
                                     blogurl=project.blogurl,
                                     confirmation_url=confirm_url,
                                     deletion_url=delete_url)

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ i18n['html_language'] }}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dein Kommentar auf {{ blogurl }}</title>
+</head>
+<body style="background-color: #393f4d;color:white;width:70%;margin:0 auto;">
+<table border="0" cellpadding="0" cellspacing="0" width='100%'>
+    <tr>
+        <td style="background-color:#feda6a;font-size:1.3em;color:black;padding:2%;">
+            <h1>Dein Kommentar auf {{ blogurl }}</h1>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="font-size: 1.2em;line-height: 1.3em;padding-left:2%;">
+                Hallo, <br><br>
+                Du erhältst diese Email, weil du soeben einen Kommentar auf {{ blogurl }} hinterlassen hast.
+                <br><br>
+                Wenn du deinen Kommentar veröffentlichen willst, klicke bitte auf diesen <a style="color:#feda6a;" href="{{ confirmation_url }}">Link</a>.
+                <br>
+                Wenn du deinen Kommentar löschen willst, klicke bitte auf diesen <a style="color:#feda6a;" href="{{ deletion_url }}">Link</a>.
+                <br><br>
+                Wenn du glaubst, dass dies ein Fehler war oder jemand deine Email Adresse ohnen deinen Wissen verwendet hat, kontaktiere bitte
+                den Administrator von {{ blogurl }}.
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td style="border-top: 1px dashed #feda6a;padding-left:2%;">
+            <p style="font-size: 0.8em">
+                Powered by <a style="color:#feda6a;" href="https://labertasche.tuxstash.de">Labertasche</a>,
+                &nbsp;lizensiert via MIT license.
+            </p>
+        <td>
+    </tr>
+</table>
+</body>
