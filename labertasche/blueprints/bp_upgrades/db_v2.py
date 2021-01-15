@@ -214,7 +214,6 @@ def upgrade_db_to_v2_import():
 
         # walk json and readd to database with project set to project 1
         for each in mails:
-            each.update({'project_id': 1})
             db.session.add(TEmail(**each))
 
         for each in locations:
