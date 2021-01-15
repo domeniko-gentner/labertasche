@@ -6,7 +6,7 @@
 #  * _repo    : https://git.tuxstash.de/gothseidank/labertasche
 #  * _license : This project is under MIT License
 #  *********************************************************************************/
-from flask import Request
+from flask import Request, current_app
 from pathlib import Path
 from json import load
 
@@ -19,7 +19,8 @@ class Language:
         self.languages = list()
 
         # Directory where translations live
-        i18n_dir = Path('i18n').absolute()
+        i18n_dir = Path(current_app.root_path).absolute()
+        i18n_dir = i18n_dir / "i18n"
 
         # Looks for translations
         for filename in i18n_dir.glob("*.json"):
