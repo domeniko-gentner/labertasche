@@ -138,7 +138,7 @@ def upgrade_db_to_v2_export():
             new_db = get_backup_folder() / "labertasche.db"
             old_db = Path(current_app.root_path)
             old_db = old_db / m.group(2)
-            copy(old_db.absolute(), new_db)
+            copy(old_db.absolute(), new_db.absolute())
     except Exception as e:
         return make_response(jsonify(status='exception-copy-db', msg=str(e)), 400)
 
