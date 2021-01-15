@@ -148,6 +148,7 @@ class LegacySettings:
         }
 
         # backup old config
+        print("Copying old config to backup")
         copy(old, old.with_suffix('.bak'))
 
         # Write new config files
@@ -163,10 +164,14 @@ class LegacySettings:
             p_secret = '/etc/labertasche/' / p_secret
 
         with p_sys.open('w') as fp:
+            print("Dumping system vars as yaml")
             yaml.dump(systemvars, fp)
         with p_credentials.open('w') as fp:
+            print("Dumping credentials as yaml")
             yaml.dump(credentials, fp)
         with p_smileys.open('w') as fp:
+            print("Dumping smileys as yaml")
             yaml.dump(smileys, fp)
         with p_secret.open('w') as fp:
+            print("Dumping secret")
             fp.write(self.system['secret'])
