@@ -9,7 +9,7 @@
 from . import bp_dbupgrades
 from flask_cors import cross_origin
 from flask_login import login_required
-from flask import render_template, jsonify, make_response, redirect, url_for
+from flask import render_template, jsonify, make_response, redirect, url_for, current_app
 from pathlib import Path
 from labertasche.database import labertasche_db as db
 from labertasche.models import TProjects, TComments, TLocation, TEmail, TVersion
@@ -22,7 +22,8 @@ from datetime import datetime
 
 
 def get_backup_folder() -> Path:
-    path = Path('.').absolute() / "backup" / "v1"
+    path = Path(current_app.root_path)
+    path = path / "backup" / "v1"
     return path
 
 
