@@ -55,7 +55,7 @@ def upgrade_db_to_v2_backup():
     # Create path for backup
     try:
         if not path.exists():
-            path.mkdir(mode=755, exist_ok=True, parents=True)
+            path.mkdir(mode=777, exist_ok=True, parents=True)
     except OSError as e:
         return make_response(jsonify(status='exception', msg=str(e)), 400)
 
