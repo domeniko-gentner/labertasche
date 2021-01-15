@@ -57,7 +57,6 @@ def check_and_insert_new_comment(name):
         if not is_valid_json(new_comment) or \
                 len(new_comment['content']) < 40 or \
                 len(new_comment['email']) < 5:
-            print("too short", file=stderr)
             return make_response(jsonify(status='post-invalid-json'), 400)
 
         # Strip any HTML from message body
@@ -208,7 +207,6 @@ def check_deletion_link(name, email_hash):
     if comment:
         location = db.session.query(TLocation).filter(TLocation.id_location == comment.location_id).first()
         if compare_digest(comment.deletion, email_hash):
-            print("True")
             db.session.delete(comment)
             db.session.commit()
             url = f"{project.blogurl}?deleted=true"
