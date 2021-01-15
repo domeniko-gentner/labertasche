@@ -113,6 +113,7 @@ class LegacySettings:
             file = file.with_suffix('.bak')
 
         with file.open('r') as fp:
+            print("Loading old conf")
             conf = yaml.safe_load(fp)
 
         self.system = conf['system']
