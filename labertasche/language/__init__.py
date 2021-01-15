@@ -19,7 +19,7 @@ class Language:
         self.languages = list()
 
         # Directory where translations live
-        i18n_dir = Path('./i18n').absolute()
+        i18n_dir = Path('i18n').absolute()
 
         # Looks for translations
         for filename in i18n_dir.glob("*.json"):
