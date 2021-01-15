@@ -25,7 +25,7 @@ def hash_password(password, secret=None):
         secret = Secret()
     h = pbkdf2_hmac('sha512',
                     password=password.encode('utf8'),
-                    salt=secret.key.encode('utf8'),
+                    salt=secret.encode('utf8'),
                     iterations=250000)
     return h.hex()
 
