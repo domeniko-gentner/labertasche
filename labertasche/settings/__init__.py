@@ -129,10 +129,10 @@ class LegacySettings:
         systemvars = {
             'system': {
                 'weburl': self.system['web_url'],
-                'cookie_domain': self.system['cookie_domain'],
+                'cookie_domain': self.system['cookie-domain'],
                 'database_uri': self.system['database_uri'],
                 'debug': self.system['debug'],
-                'cookie_secure': self.system['cookie_secure']
+                'cookie_secure': False
             }
         }
 
